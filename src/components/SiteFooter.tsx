@@ -14,6 +14,12 @@ export function SiteFooter() {
           <span aria-hidden className="hidden sm:inline">
             ·
           </span>
+          <Link href="/guidelines" className="transition-colors hover:text-ink-soft">
+            Guidelines
+          </Link>
+          <span aria-hidden className="hidden sm:inline">
+            ·
+          </span>
           <span>
             Offered freely under{" "}
             <a

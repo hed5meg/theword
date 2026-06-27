@@ -2,11 +2,16 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getPassage } from "@/lib/data";
-import { getUser } from "@/lib/auth";
+import { getProfile } from "@/lib/auth";
 import { getMyResonatedIds } from "@/lib/resonance";
 import { getReflections } from "@/lib/data/reflections";
+import { getGatheredHistory } from "@/lib/data/gathering";
 import { RenderingArticle } from "@/components/RenderingArticle";
 import { Reflections } from "@/components/Reflections";
+import {
+  StewardPassageTools,
+  GatheredHistory,
+} from "@/components/StewardPassageTools";
 
 export const dynamic = "force-dynamic";
 
@@ -40,15 +45,17 @@ export default async function PassagePage({
   const alternatives = p.renderings.filter((r) => !r.isGathered);
 
   const path = `/read/${movement}/${passage}`;
-  const [user, resonated, reflections] = await Promise.all([
-    getUser(),
+  const [profile, resonated, reflections, history] = await Promise.all([
+    getProfile(),
     getMyResonatedIds(
       "rendering",
       p.renderings.map((r) => r.id).filter((id): id is string => Boolean(id)),
     ),
     p.id ? getReflections("passage", p.id) : Promise.resolve([]),
+    p.id ? getGatheredHistory(p.id) : Promise.resolve([]),
   ]);
-  const signedIn = Boolean(user);
+  const signedIn = Boolean(profile);
+  const isSteward = profile?.role === "steward" || profile?.role === "admin";
 
   return (
     <div className="mx-auto max-w-3xl px-5 py-12 sm:px-8">
@@ -103,6 +110,8 @@ export default async function PassagePage({
         </p>
       )}
 
+      <GatheredHistory events={history} />
+
       {/* Alternative renderings, held side by side */}
       <section className="mt-16">
         <div className="flex items-baseline justify-between gap-4">
@@ -148,6 +157,11 @@ export default async function PassagePage({
           </Link>
         </div>
       </section>
+
+      {/* Steward tools */}
+      {isSteward && p.id && (
+        <StewardPassageTools passageId={p.id} renderings={p.renderings} path={path} />
+      )}
 
       {/* Reflections */}
       {p.id && (

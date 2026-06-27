@@ -20,6 +20,8 @@ export type ResonanceTarget = "rendering" | "tenet" | "reflection";
 
 export type ReflectionTarget = "passage" | "rendering" | "tenet";
 
+export type FlagTarget = "passage" | "rendering" | "tenet" | "reflection";
+
 export interface Tenet {
   id?: string;
   slug: string;

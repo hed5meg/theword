@@ -24,6 +24,14 @@ export async function SiteHeader() {
           </Link>
           {profile ? (
             <>
+              {(profile.role === "steward" || profile.role === "admin") && (
+                <Link
+                  href="/steward"
+                  className="text-gold transition-colors hover:text-ink"
+                >
+                  Steward
+                </Link>
+              )}
               <Link
                 href={`/members/${profile.handle}`}
                 className="text-ink-soft transition-colors hover:text-ink"

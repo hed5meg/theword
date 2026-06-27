@@ -7,6 +7,7 @@ import { getMyResonatedIds } from "@/lib/resonance";
 import { getReflections } from "@/lib/data/reflections";
 import { ResonanceControl } from "@/components/ResonanceControl";
 import { Reflections } from "@/components/Reflections";
+import { FlagControl } from "@/components/FlagControl";
 
 export const dynamic = "force-dynamic";
 
@@ -59,7 +60,7 @@ export default async function TenetPage({
           {tenet.title}
         </h1>
         {tenet.id && (
-          <div className="mt-4">
+          <div className="mt-4 flex flex-wrap items-center gap-4">
             <ResonanceControl
               targetType="tenet"
               targetId={tenet.id}
@@ -68,6 +69,12 @@ export default async function TenetPage({
               signedIn={Boolean(user)}
               path={`/tenets/${slug}`}
               noun="this tenet"
+            />
+            <FlagControl
+              targetType="tenet"
+              targetId={tenet.id}
+              path={`/tenets/${slug}`}
+              signedIn={Boolean(user)}
             />
           </div>
         )}

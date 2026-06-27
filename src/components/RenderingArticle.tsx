@@ -3,6 +3,7 @@ import type { Rendering } from "@/lib/types";
 import { Prose } from "@/components/Prose";
 import { TenetList } from "@/components/TenetList";
 import { ResonanceControl } from "@/components/ResonanceControl";
+import { FlagControl } from "@/components/FlagControl";
 
 /**
  * One rendering of a passage. The gathered rendering is set larger and airier;
@@ -58,15 +59,23 @@ export function RenderingArticle({
       <footer className="mt-6 flex flex-col gap-4 border-t border-line/70 pt-4">
         <TenetList tenets={rendering.tenets} />
         {rendering.id && (
-          <ResonanceControl
-            targetType="rendering"
-            targetId={rendering.id}
-            count={rendering.resonanceCount}
-            active={resonated}
-            signedIn={signedIn}
-            path={path}
-            noun="this rendering"
-          />
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <ResonanceControl
+              targetType="rendering"
+              targetId={rendering.id}
+              count={rendering.resonanceCount}
+              active={resonated}
+              signedIn={signedIn}
+              path={path}
+              noun="this rendering"
+            />
+            <FlagControl
+              targetType="rendering"
+              targetId={rendering.id}
+              path={path}
+              signedIn={signedIn}
+            />
+          </div>
         )}
       </footer>
     </article>

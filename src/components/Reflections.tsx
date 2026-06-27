@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { ReflectionTarget } from "@/lib/types";
 import type { ReflectionNode } from "@/lib/data/reflections";
 import { addReflection } from "@/lib/actions/reflections";
+import { FlagControl } from "@/components/FlagControl";
 
 function formatDate(iso: string): string {
   try {
@@ -86,22 +87,32 @@ function ReflectionItem({
         </p>
         <p className="whitespace-pre-line text-ink">{node.body}</p>
 
-        {signedIn && depth === 0 && (
-          <details className="ui mt-3 group">
-            <summary className="cursor-pointer list-none text-xs text-gold transition-colors hover:text-ink">
-              Reply
-            </summary>
-            <div className="mt-3">
-              <ReflectionForm
-                targetType={targetType}
-                targetId={targetId}
-                path={path}
-                parentId={node.id}
-                placeholder="A gentle reply…"
-                small
-              />
-            </div>
-          </details>
+        {signedIn && (
+          <div className="mt-3 flex items-center gap-4">
+            {depth === 0 && (
+              <details className="ui group">
+                <summary className="cursor-pointer list-none text-xs text-gold transition-colors hover:text-ink">
+                  Reply
+                </summary>
+                <div className="mt-3">
+                  <ReflectionForm
+                    targetType={targetType}
+                    targetId={targetId}
+                    path={path}
+                    parentId={node.id}
+                    placeholder="A gentle reply…"
+                    small
+                  />
+                </div>
+              </details>
+            )}
+            <FlagControl
+              targetType="reflection"
+              targetId={node.id}
+              path={path}
+              signedIn={signedIn}
+            />
+          </div>
         )}
       </div>
 
