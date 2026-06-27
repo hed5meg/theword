@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ResonanceTarget } from "@/lib/types";
 import { toggleResonance } from "@/lib/actions/resonance";
+import { ResonanceLightButton } from "@/components/ResonanceLightButton";
 
 /**
  * Additive "this resonates" control. Signed-in members can give or withdraw a
@@ -32,12 +33,10 @@ export function ResonanceControl({
     return (
       <Link
         href={`/signin?next=${encodeURIComponent(path)}`}
-        className="ui inline-flex items-center gap-1.5 text-xs text-ink-faint transition-colors hover:text-ink-soft"
+        className="ui inline-flex items-center gap-1.5 rounded-full border border-gold-soft/70 bg-card px-4 py-1.5 text-sm font-medium text-gold shadow-[0_0_16px_-3px_rgba(201,168,94,0.55)] transition-transform hover:-translate-y-px hover:bg-glow"
         title={`Sign in to say ${noun} resonates`}
       >
-        <span aria-hidden className="text-gold-soft">
-          ✦
-        </span>
+        <span aria-hidden>✦</span>
         {label}
       </Link>
     );
@@ -48,18 +47,11 @@ export function ResonanceControl({
       <input type="hidden" name="target_type" value={targetType} />
       <input type="hidden" name="target_id" value={targetId} />
       <input type="hidden" name="path" value={path} />
-      <button
-        type="submit"
-        aria-pressed={active}
-        className={`ui inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs transition-colors ${
-          active
-            ? "border-gold-soft/60 bg-glow text-gold"
-            : "border-line text-ink-faint hover:border-gold-soft/50 hover:text-ink-soft"
-        }`}
-      >
-        <span aria-hidden>✦</span>
-        {active ? `This resonates · ${count}` : label}
-      </button>
+      <ResonanceLightButton
+        active={active}
+        label={label}
+        activeLabel={`This resonates · ${count}`}
+      />
     </form>
   );
 }
