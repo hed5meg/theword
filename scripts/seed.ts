@@ -16,6 +16,16 @@ import type { ArrangementSeed } from "@/lib/content/seed";
 async function main() {
   const db = createAdminClient();
 
+  // The "A Vision" telling is a community contribution by the project owner, not
+  // a project seed. Attribute it to their profile when present.
+  const OWNER_HANDLE = process.env.OWNER_HANDLE ?? "davepackard";
+  const { data: owner } = await db
+    .from("profiles")
+    .select("id")
+    .eq("handle", OWNER_HANDLE)
+    .maybeSingle();
+  const ownerId = (owner?.id as string | undefined) ?? null;
+
   // 1. Tenets ---------------------------------------------------------------
   const tenets = await buildTenets();
   const { data: tenetRows, error: tenetErr } = await db
@@ -92,7 +102,10 @@ async function main() {
           .from("renderings")
           .insert({
             passage_id: pId,
-            author_name: r.author,
+            // "A Vision" → the owner's community rendering; the fuller telling
+            // stays a project seed (author_name only).
+            author_id: r.author === "A Vision" ? ownerId : null,
+            author_name: r.author === "A Vision" && ownerId ? null : r.author,
             body: r.body,
             language: r.language,
             tradition: r.tradition ?? null,
