@@ -2,35 +2,9 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import type { SupabaseClient } from "@supabase/supabase-js";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { notify } from "@/lib/email";
-
-/** Ensure a rendering has a baseline version row; return its id (for provenance). */
-async function ensureRenderingVersion(
-  sb: SupabaseClient,
-  renderingId: string,
-): Promise<string | null> {
-  const { data: existing } = await sb
-    .from("rendering_versions")
-    .select("id")
-    .eq("rendering_id", renderingId)
-    .order("created_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
-  if (existing) return existing.id as string;
-  const { data: r } = await sb
-    .from("renderings")
-    .select("body")
-    .eq("id", renderingId)
-    .maybeSingle();
-  const { data: created } = await sb
-    .from("rendering_versions")
-    .insert({ rendering_id: renderingId, body: r?.body ?? "", note: "baseline" })
-    .select("id")
-    .single();
-  return (created?.id as string) ?? null;
-}
+import { ensureRenderingVersion } from "@/lib/versions";
 
 export async function createNote(formData: FormData) {
   const path = String(formData.get("path") ?? "/");

@@ -1,11 +1,14 @@
 import Link from "next/link";
 import { getProfile } from "@/lib/auth";
 import { getNoteCount } from "@/lib/data/notes";
+import { getRefinementCount } from "@/lib/data/refinements";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
 export async function SiteHeader() {
   const profile = await getProfile();
-  const noteCount = profile ? await getNoteCount() : 0;
+  const [noteCount, refinementCount] = profile
+    ? await Promise.all([getNoteCount(), getRefinementCount()])
+    : [0, 0];
 
   return (
     <header className="border-b border-line/70">
@@ -43,9 +46,15 @@ export async function SiteHeader() {
               )}
               <Link
                 href="/notes"
-                className="text-ink-soft transition-colors hover:text-ink"
+                className="hidden text-ink-soft transition-colors hover:text-ink sm:inline"
               >
                 Notes{noteCount > 0 ? ` (${noteCount})` : ""}
+              </Link>
+              <Link
+                href="/refinements"
+                className="hidden text-ink-soft transition-colors hover:text-ink sm:inline"
+              >
+                Refinements{refinementCount > 0 ? ` (${refinementCount})` : ""}
               </Link>
               <Link
                 href={`/members/${profile.handle}`}

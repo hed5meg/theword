@@ -7,6 +7,10 @@ import rehypeSanitize from "rehype-sanitize";
 import type { Note } from "@/lib/types";
 import { computeAnchor, offsetsToRange, reAnchor, type TextAnchor } from "@/lib/anchor";
 import { createNote, addNoteReply, setNoteStatus } from "@/lib/actions/notes";
+import {
+  createRefinement,
+  promoteNoteToRefinement,
+} from "@/lib/actions/refinements";
 
 // CSS Custom Highlight API (progressive enhancement; typed loosely as it's new).
 type HighlightCtor = new (...ranges: Range[]) => unknown;
@@ -23,6 +27,7 @@ export function NoteLayer({
   canCreate,
   canManage,
   proseClass = "",
+  allTenets = [],
 }: {
   renderingId: string;
   body: string;
@@ -31,11 +36,12 @@ export function NoteLayer({
   canCreate: boolean;
   canManage: boolean;
   proseClass?: string;
+  allTenets?: { slug: string; title: string }[];
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const [anchor, setAnchor] = useState<TextAnchor | null>(null);
   const [btn, setBtn] = useState<{ top: number; left: number } | null>(null);
-  const [composing, setComposing] = useState(false);
+  const [composing, setComposing] = useState<"note" | "refinement" | null>(null);
   const [openNote, setOpenNote] = useState<Note | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
@@ -119,32 +125,37 @@ export function NoteLayer({
         </button>
       )}
 
-      {/* Floating "Leave a note" on selection */}
+      {/* Floating selection menu */}
       {btn && anchor && !composing && (
-        <button
-          type="button"
-          onClick={() => {
-            setComposing(true);
-            setBtn(null);
-          }}
+        <div
           style={{ position: "fixed", top: btn.top, left: btn.left, transform: "translate(-50%, -100%)" }}
-          className="ui z-40 rounded-full bg-ink px-3 py-1.5 text-xs font-medium text-parchment shadow-lg"
+          className="ui z-40 flex overflow-hidden rounded-full bg-ink text-xs font-medium text-parchment shadow-lg"
         >
-          Leave a note
-        </button>
+          <button
+            type="button"
+            onClick={() => { setComposing("note"); setBtn(null); }}
+            className="px-3 py-1.5 hover:bg-ink-soft"
+          >
+            Leave a note
+          </button>
+          <span aria-hidden className="my-1 w-px bg-parchment/30" />
+          <button
+            type="button"
+            onClick={() => { setComposing("refinement"); setBtn(null); }}
+            className="px-3 py-1.5 hover:bg-ink-soft"
+          >
+            Suggest a refinement
+          </button>
+        </div>
       )}
 
-      {/* Compose */}
-      {composing && anchor && (
-        <Sheet onClose={() => setComposing(false)} title="Leave a note">
+      {/* Compose a note */}
+      {composing === "note" && anchor && (
+        <Sheet onClose={() => setComposing(null)} title="Leave a note">
           <p className="ui mb-3 rounded-lg border border-line bg-parchment-deep/40 p-3 text-sm italic text-ink-soft">
             “{anchor.quotedText}”
           </p>
-          <form
-            action={createNote}
-            className="ui space-y-3"
-            onSubmit={() => setComposing(false)}
-          >
+          <form action={createNote} className="ui space-y-3" onSubmit={() => setComposing(null)}>
             <input type="hidden" name="path" value={path} />
             <input type="hidden" name="rendering_id" value={renderingId} />
             <input type="hidden" name="quoted_text" value={anchor.quotedText} />
@@ -166,14 +177,68 @@ export function NoteLayer({
               className="w-full rounded-xl border border-line bg-card px-3 py-2 text-ink outline-none focus:border-gold-soft"
             />
             <p className="text-xs text-ink-faint">
-              Goes only to the one who offered this rendering and the stewards. Held in
-              love.
+              Goes only to the one who offered this rendering and the stewards. Held in love.
             </p>
-            <button
-              type="submit"
-              className="rounded-full bg-ink px-5 py-2 text-sm font-medium text-parchment transition-opacity hover:opacity-90"
-            >
+            <button type="submit" className="rounded-full bg-ink px-5 py-2 text-sm font-medium text-parchment hover:opacity-90">
               Offer the note
+            </button>
+          </form>
+        </Sheet>
+      )}
+
+      {/* Compose a refinement */}
+      {composing === "refinement" && anchor && (
+        <Sheet onClose={() => setComposing(null)} title="Suggest a refinement">
+          <p className="ui mb-1 text-xs uppercase tracking-wider text-ink-faint">Currently</p>
+          <p className="ui mb-3 rounded-lg border border-line bg-parchment-deep/40 p-3 text-sm italic text-ink-soft">
+            “{anchor.quotedText}”
+          </p>
+          <form action={createRefinement} className="ui space-y-3" onSubmit={() => setComposing(null)}>
+            <input type="hidden" name="path" value={path} />
+            <input type="hidden" name="rendering_id" value={renderingId} />
+            <input type="hidden" name="quoted_text" value={anchor.quotedText} />
+            <input type="hidden" name="anchor_start" value={anchor.anchorStart} />
+            <input type="hidden" name="anchor_end" value={anchor.anchorEnd} />
+            <input type="hidden" name="context_prefix" value={anchor.contextPrefix} />
+            <input type="hidden" name="context_suffix" value={anchor.contextSuffix} />
+            <div>
+              <label className="block text-xs uppercase tracking-wider text-gold">
+                Your proposed wording
+              </label>
+              <textarea
+                name="replacement_text"
+                required
+                rows={3}
+                defaultValue={anchor.quotedText}
+                className="mt-1 w-full rounded-xl border border-line bg-card px-3 py-2 text-ink outline-none focus:border-gold-soft"
+              />
+            </div>
+            <textarea
+              name="reason"
+              rows={2}
+              placeholder="Why this refines it"
+              className="w-full rounded-xl border border-line bg-card px-3 py-2 text-ink outline-none focus:border-gold-soft"
+            />
+            {allTenets.length > 0 && (
+              <details>
+                <summary className="cursor-pointer text-xs text-ink-faint">
+                  Principles it serves (optional)
+                </summary>
+                <div className="mt-2 grid max-h-40 grid-cols-1 gap-1 overflow-y-auto sm:grid-cols-2">
+                  {allTenets.map((t) => (
+                    <label key={t.slug} className="flex items-start gap-2 text-sm text-ink-soft">
+                      <input type="checkbox" name="tenets" value={t.slug} className="mt-1 accent-[var(--color-gold)]" />
+                      <span>{t.title}</span>
+                    </label>
+                  ))}
+                </div>
+              </details>
+            )}
+            <p className="text-xs text-ink-faint">
+              Held gently, and weighed in love by the one who offered this rendering.
+            </p>
+            <button type="submit" className="rounded-full bg-ink px-5 py-2 text-sm font-medium text-parchment hover:opacity-90">
+              Offer the refinement
             </button>
           </form>
         </Sheet>
@@ -222,10 +287,22 @@ export function NoteLayer({
           </p>
           <p className="text-ink">{openNote.body}</p>
           {openNote.suggestedWording && (
-            <p className="ui mt-2 text-sm text-ink-soft">
-              <span className="text-ink-faint">Suggested wording:</span>{" "}
-              {openNote.suggestedWording}
-            </p>
+            <div className="ui mt-2">
+              <p className="text-sm text-ink-soft">
+                <span className="text-ink-faint">Suggested wording:</span>{" "}
+                {openNote.suggestedWording}
+              </p>
+              <form action={promoteNoteToRefinement} className="mt-2">
+                <input type="hidden" name="path" value={path} />
+                <input type="hidden" name="note_id" value={openNote.id} />
+                <button
+                  type="submit"
+                  className="rounded-full border border-gold-soft/60 px-3 py-1 text-xs text-gold transition-colors hover:bg-glow"
+                >
+                  Make this a refinement
+                </button>
+              </form>
+            </div>
           )}
           <p className="ui mt-1 text-xs text-ink-faint">
             {openNote.authorName} · {openNote.status}

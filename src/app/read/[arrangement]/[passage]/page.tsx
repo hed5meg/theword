@@ -6,6 +6,7 @@ import {
   getArrangementOutline,
   getArrangementMetaList,
 } from "@/lib/data/arrangements";
+import { getTenets } from "@/lib/data";
 import { getProfile } from "@/lib/auth";
 import { getMyResonatedIds } from "@/lib/resonance";
 import { getReflections } from "@/lib/data/reflections";
@@ -79,6 +80,7 @@ export default async function PassagePage({
       getArrangementMetaList(),
       getNotesByRendering(renderingIds),
     ]);
+  const allTenets = (await getTenets()).map((t) => ({ slug: t.slug, title: t.title }));
   const signedIn = Boolean(profile);
   const isSteward = profile?.role === "steward" || profile?.role === "admin";
   const canManageNotes = (r: { authorHandle?: string }) =>
@@ -213,6 +215,7 @@ export default async function PassagePage({
             showTenetInfo
             notes={gathered.id ? notesByRendering.get(gathered.id) : undefined}
             canManageNotes={canManageNotes(gathered)}
+            allTenets={allTenets}
           />
         </section>
       ) : (
@@ -249,6 +252,7 @@ export default async function PassagePage({
                 path={path}
                 notes={r.id ? notesByRendering.get(r.id) : undefined}
                 canManageNotes={canManageNotes(r)}
+                allTenets={allTenets}
               />
             ))}
           </div>

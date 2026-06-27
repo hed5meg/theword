@@ -214,6 +214,34 @@ export interface InboxNote extends Note {
   renderingAuthor: string;
 }
 
+// ---- Refinements -----------------------------------------------------------
+export interface RefinementChangeView {
+  id: string;
+  quotedText: string;
+  replacementText: string;
+  /** The current text where this change would land (null if stale). */
+  currently: string | null;
+  stale: boolean;
+  status: "open" | "gathered_in" | "set_aside" | "stale";
+}
+
+export interface RefinementView {
+  id: string;
+  status: "open" | "gathered_in" | "set_aside" | "withdrawn";
+  reason?: string;
+  proposerName: string;
+  proposerHandle?: string;
+  createdAt: string;
+  passageTitle: string;
+  passageHref: string;
+  renderingAuthor: string;
+  changes: RefinementChangeView[];
+  tenetTitles: string[];
+  replies: { id: string; authorName: string; body: string }[];
+  canManage: boolean;
+  isProposer: boolean;
+}
+
 export interface ArrangementCard extends ArrangementMeta {
   id: string;
   movementCount: number;

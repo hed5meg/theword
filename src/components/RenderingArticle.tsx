@@ -19,6 +19,7 @@ export function RenderingArticle({
   showTenetInfo = false,
   notes,
   canManageNotes = false,
+  allTenets = [],
 }: {
   rendering: Rendering;
   variant?: "gathered" | "alternative";
@@ -28,6 +29,7 @@ export function RenderingArticle({
   showTenetInfo?: boolean;
   notes?: Note[];
   canManageNotes?: boolean;
+  allTenets?: { slug: string; title: string }[];
 }) {
   const isGathered = variant === "gathered";
   // Seed renderings are the project's own two tellings (no author profile).
@@ -86,6 +88,7 @@ export function RenderingArticle({
           canCreate={signedIn}
           canManage={canManageNotes}
           proseClass={isGathered ? "prose-gathered" : ""}
+          allTenets={allTenets}
         />
       ) : (
         <Prose className={isGathered ? "prose-gathered" : ""}>
