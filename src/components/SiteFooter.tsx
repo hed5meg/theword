@@ -9,7 +9,7 @@ export function SiteFooter() {
         </p>
         <div className="ui mt-4 flex flex-col gap-2 text-sm text-ink-faint sm:flex-row sm:items-center sm:gap-6">
           <Link href="/read" className="transition-colors hover:text-ink-soft">
-            Read Pollinations
+            Unseal
           </Link>
           <span aria-hidden className="hidden sm:inline">
             ·

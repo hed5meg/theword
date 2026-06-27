@@ -16,7 +16,7 @@ export async function generateMetadata({
   if (!profile) return {};
   return {
     title: profile.displayName,
-    description: `${profile.displayName}'s renderings and the principles they read by.`,
+    description: `${profile.displayName}'s branches and the principles they read by.`,
   };
 }
 
@@ -85,7 +85,7 @@ export default async function MemberPage({
 
       <section className="mt-12">
         <h2 className="font-serif text-2xl text-ink">
-          {isSelf ? "Your" : "Their"} rendering of the book
+          {isSelf ? "Your" : "Their"} branches of the book
         </h2>
         {renderings.length > 0 ? (
           <ul className="mt-5 divide-y divide-line/70 overflow-hidden rounded-2xl border border-line bg-card/50">
@@ -113,8 +113,8 @@ export default async function MemberPage({
         ) : (
           <p className="mt-5 rounded-2xl border border-dashed border-line bg-card/40 p-6 text-ink-soft">
             {isSelf
-              ? "You haven't offered a rendering yet. Open any passage and add your light."
-              : "No renderings offered yet."}
+              ? "You haven't offered a branch yet. Open any passage and add your light."
+              : "No branches offered yet."}
           </p>
         )}
       </section>

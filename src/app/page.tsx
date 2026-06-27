@@ -35,7 +35,7 @@ export default async function HomePage() {
               href="/read"
               className="w-full rounded-full bg-ink px-7 py-3 text-center text-sm font-medium text-parchment transition-opacity hover:opacity-90 sm:w-auto"
             >
-              Read Pollinations
+              Unseal
             </Link>
             {!user && <AddYourLight className="w-full text-sm sm:w-auto" />}
           </div>
@@ -79,7 +79,7 @@ export default async function HomePage() {
           href="/read"
           className="ui mt-8 inline-block rounded-full bg-ink px-7 py-3 text-sm font-medium text-parchment transition-opacity hover:opacity-90"
         >
-          Open the book
+          Unseal
         </Link>
       </section>
     </div>
@@ -89,11 +89,11 @@ export default async function HomePage() {
 const PRINCIPLES = [
   {
     title: "Held side by side",
-    body: "Every rendering of a passage sits beside the others — never ranked, never in competition. We gather, we do not compete.",
+    body: "Every branch of a passage sits beside the others — never ranked, never in competition. We gather, we do not compete.",
   },
   {
     title: "Filtered through love",
-    body: "Each rendering names the principles it read by — lenses tested against the two great commandments, refined by many hands.",
+    body: "Each branch names the principles it read by — lenses tested against the two great commandments, refined by many hands.",
   },
   {
     title: "Nothing is final",

@@ -30,7 +30,7 @@ export async function SiteHeader() {
         </Link>
         <nav className="ui flex flex-1 flex-wrap items-center justify-end gap-x-4 gap-y-2 text-sm sm:gap-5">
           <Link href="/read" className="text-ink-soft transition-colors hover:text-ink">
-            Read
+            Unseal
           </Link>
           <Link
             href="/arrangements"

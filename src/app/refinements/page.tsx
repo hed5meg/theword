@@ -30,18 +30,18 @@ export default async function RefinementsPage() {
   return (
     <div className="mx-auto max-w-2xl px-5 py-14 sm:px-8">
       <header>
-        <p className="eyebrow">Gifts to the renderings</p>
+        <p className="eyebrow">Gifts to the branches</p>
         <h1 className="mt-3 font-serif text-3xl tracking-tight text-ink">Refinements</h1>
         <p className="mt-2 text-ink-soft">
           Proposed wordings, offered in love — gather them in or set them aside with
           thanks. A refinement that&rsquo;s gathered in is cross-pollinated into the
-          rendering, the offerer credited.
+          branch, the offerer credited.
         </p>
       </header>
 
       {refinements.length === 0 ? (
         <p className="mt-10 rounded-2xl border border-dashed border-line bg-card/40 p-6 text-ink-soft">
-          No refinements waiting — the renderings rest as they are, for now.
+          No refinements waiting — the branches rest as they are, for now.
         </p>
       ) : (
         <ul className="mt-10 space-y-6">

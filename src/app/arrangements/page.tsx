@@ -118,7 +118,7 @@ function ArrangementCardView({
           href={`/read/${card.slug}`}
           className="rounded-full bg-ink px-5 py-2 font-medium text-parchment transition-opacity hover:opacity-90"
         >
-          Read the book this way
+          Unseal this way
         </Link>
         <Link
           href={`/arrangements/${card.slug}`}

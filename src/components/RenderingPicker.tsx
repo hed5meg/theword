@@ -24,11 +24,11 @@ export function RenderingPicker({
   }
   return (
     <label className="ui flex min-w-0 max-w-full items-center gap-2 text-sm text-ink-soft">
-      <span className="shrink-0 text-ink-faint">Rendering:</span>
+      <span className="shrink-0 text-ink-faint">Branch:</span>
       <select
         value={current}
         onChange={onChange}
-        aria-label="Choose a rendering to read"
+        aria-label="Choose a branch to read"
         className="min-w-0 max-w-full truncate rounded-full border border-line bg-card px-3 py-1.5 text-ink outline-none focus:border-gold-soft"
       >
         {options.map((o) => (

@@ -85,7 +85,7 @@ export default async function ArrangementTOC({
                     </span>
                     <span className="ui shrink-0 text-xs text-ink-faint">
                       {p.renderingCount}{" "}
-                      {p.renderingCount === 1 ? "rendering" : "renderings"}
+                      {p.renderingCount === 1 ? "branch" : "branches"}
                     </span>
                   </Link>
                 </li>

@@ -26,7 +26,7 @@ export default async function NotesInboxPage() {
       <header>
         <p className="eyebrow">In the margins</p>
         <h1 className="mt-3 font-serif text-3xl tracking-tight text-ink">
-          {isSteward ? "Notes across the gathering" : "Notes on your renderings"}
+          {isSteward ? "Notes across the gathering" : "Notes on your branches"}
         </h1>
         <p className="mt-2 text-ink-soft">
           Gentle, directed notes — questions, encouragements, and suggested wordings,

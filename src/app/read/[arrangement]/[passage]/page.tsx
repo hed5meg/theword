@@ -68,7 +68,7 @@ export default async function PassagePage({
   // Pick which rendering to read (default the gathered one). One at a time.
   const renderingOptions = p.renderings.map((r) => ({
     key: r.isGathered ? "gathered" : (r.id ?? ""),
-    label: r.isGathered ? `Gathered — ${r.author}` : r.author,
+    label: r.author,
   }));
   const selectedKey =
     typeof renderingParam === "string" &&
@@ -100,6 +100,41 @@ export default async function PassagePage({
     isSteward || (Boolean(profile) && profile!.handle === r.authorHandle);
   const offerHref = `/render/${p.slug}?arr=${arrangement}&entry=${passage}`;
 
+  // Previous / next within the arrangement — shown right under the reading text.
+  const passageNav = (
+    <nav className="ui mt-10 flex items-stretch justify-between gap-4 border-t border-line/70 pt-6 text-sm">
+      {previous ? (
+        <Link
+          href={`/read/${previous.arrangementSlug}/${previous.passageSlug}`}
+          className="group flex max-w-[40%] flex-col text-left transition-colors hover:text-ink"
+        >
+          <span className="text-xs uppercase tracking-wider text-ink-faint">← Previous</span>
+          <span className="mt-1 font-serif text-base text-ink-soft group-hover:text-ink">
+            {previous.title}
+          </span>
+        </Link>
+      ) : (
+        <span />
+      )}
+      <span className="self-center whitespace-nowrap text-xs text-ink-faint">
+        {position} / {total}
+      </span>
+      {next ? (
+        <Link
+          href={`/read/${next.arrangementSlug}/${next.passageSlug}`}
+          className="group flex max-w-[40%] flex-col text-right transition-colors hover:text-ink"
+        >
+          <span className="text-xs uppercase tracking-wider text-ink-faint">Next →</span>
+          <span className="mt-1 font-serif text-base text-ink-soft group-hover:text-ink">
+            {next.title}
+          </span>
+        </Link>
+      ) : (
+        <span />
+      )}
+    </nav>
+  );
+
   // Comparison mode: build the selectable texts (traditional + every rendering).
   const compareTexts: CompareText[] = [];
   if (p.traditionalText) {
@@ -114,7 +149,7 @@ export default async function PassagePage({
   for (const r of p.renderings) {
     compareTexts.push({
       key: r.isGathered ? "gathered" : (r.id ?? ""),
-      label: r.isGathered ? `Gathered Rendering — ${r.author}` : r.author,
+      label: r.author,
       kind: "rendering",
       body: r.body,
       language: r.language,
@@ -191,7 +226,11 @@ export default async function PassagePage({
           initialRight={cmpRight}
           basePath={path}
         />
-      ) : (
+      ) : null}
+
+      {compareOn && passageNav}
+
+      {!compareOn && (
         <>
       {/* Traditional text */}
       {p.traditionalText && (
@@ -222,7 +261,7 @@ export default async function PassagePage({
             basePath={path}
           />
           <span className="ui text-xs text-ink-faint">
-            {renderingOptions.length} renderings · never ranked
+            {renderingOptions.length} branches · never ranked
           </span>
         </div>
       )}
@@ -243,14 +282,16 @@ export default async function PassagePage({
           />
         </section>
       ) : (
-        <p className="mt-12 text-ink-soft">No rendering yet for this passage.</p>
+        <p className="mt-12 text-ink-soft">No branch yet for this passage.</p>
       )}
+
+      {passageNav}
 
       {selected?.isGathered && <GatheredHistory events={history} />}
 
       {communityRenderings.length === 0 && (
         <p className="ui mt-8 rounded-2xl border border-dashed border-gold-soft/50 bg-glow/30 p-5 text-ink-soft">
-          No community renderings yet — yours can be the first to sit beside this
+          No community branches yet — yours can be the first to sit beside this
           telling.
         </p>
       )}
@@ -260,13 +301,13 @@ export default async function PassagePage({
           Do you read this passage differently?
         </p>
         <p className="mt-1 text-sm text-ink-soft">
-          Offer your own plain, pure rendering — it joins the others in the list above.
+          Offer your own plain, pure branch — it joins the others above.
         </p>
         <Link
           href={offerHref}
           className="mt-4 inline-block rounded-full border border-gold-soft/60 px-6 py-2.5 text-sm font-medium text-gold transition-colors hover:bg-glow"
         >
-          Offer a rendering
+          Offer a branch
         </Link>
       </div>
         </>
@@ -287,43 +328,6 @@ export default async function PassagePage({
           reflections={reflections}
         />
       )}
-
-      {/* Previous / next within the arrangement */}
-      <nav className="ui mt-16 flex items-stretch justify-between gap-4 border-t border-line/70 pt-8 text-sm">
-        {previous ? (
-          <Link
-            href={`/read/${previous.arrangementSlug}/${previous.passageSlug}`}
-            className="group flex max-w-[40%] flex-col text-left transition-colors hover:text-ink"
-          >
-            <span className="text-xs uppercase tracking-wider text-ink-faint">
-              ← Previous
-            </span>
-            <span className="mt-1 font-serif text-base text-ink-soft group-hover:text-ink">
-              {previous.title}
-            </span>
-          </Link>
-        ) : (
-          <span />
-        )}
-        <span className="self-center whitespace-nowrap text-xs text-ink-faint">
-          {position} / {total}
-        </span>
-        {next ? (
-          <Link
-            href={`/read/${next.arrangementSlug}/${next.passageSlug}`}
-            className="group flex max-w-[40%] flex-col text-right transition-colors hover:text-ink"
-          >
-            <span className="text-xs uppercase tracking-wider text-ink-faint">
-              Next →
-            </span>
-            <span className="mt-1 font-serif text-base text-ink-soft group-hover:text-ink">
-              {next.title}
-            </span>
-          </Link>
-        ) : (
-          <span />
-        )}
-      </nav>
     </div>
   );
 }

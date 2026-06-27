@@ -39,31 +39,25 @@ export function RenderingArticle({
 
   return (
     <article className={big ? "" : "rounded-2xl border border-line bg-card/50 p-6 sm:p-8"}>
-      <header className="ui mb-5 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-ink-faint">
-        {isGathered && (
-          <span className="rounded-full bg-glow px-3 py-1 text-xs font-medium tracking-wide text-gold">
-            Gathered Rendering
-          </span>
-        )}
-        {rendering.authorHandle ? (
+      {/* The branch is named by the picker above; show attribution only for
+          community branches (the seed needs none). */}
+      {rendering.authorHandle && (
+        <header className="ui mb-5 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-ink-faint">
+          <span>by</span>
           <Link
             href={`/members/${rendering.authorHandle}`}
             className="text-ink-soft transition-colors hover:text-ink"
           >
             {rendering.author}
           </Link>
-        ) : (
-          <span className="text-ink-soft">{rendering.author}</span>
-        )}
-        <span aria-hidden>·</span>
-        <span>{rendering.language}</span>
-        {rendering.tradition && (
-          <>
-            <span aria-hidden>·</span>
-            <span>{rendering.tradition}</span>
-          </>
-        )}
-      </header>
+          {rendering.tradition && (
+            <>
+              <span aria-hidden>·</span>
+              <span>{rendering.tradition}</span>
+            </>
+          )}
+        </header>
+      )}
 
       {rendering.id ? (
         <NoteLayer

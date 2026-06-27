@@ -8,7 +8,7 @@ import { createRendering } from "./actions";
 
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = { title: "Offer a rendering" };
+export const metadata: Metadata = { title: "Offer a branch" };
 
 export default async function RenderPage({
   params,
@@ -41,7 +41,7 @@ export default async function RenderPage({
       </nav>
 
       <header className="border-b border-line/70 pb-6">
-        <p className="eyebrow">Offer a rendering · {passage.canonicalRef}</p>
+        <p className="eyebrow">Offer a branch · {passage.canonicalRef}</p>
         <h1 className="mt-3 font-serif text-3xl tracking-tight text-ink">
           {passage.title}
         </h1>
@@ -67,7 +67,7 @@ export default async function RenderPage({
         <input type="hidden" name="back_entry" value={backEntry} />
 
         {error === "required" && (
-          <p className="text-sm text-red-700">Please write a rendering before offering it.</p>
+          <p className="text-sm text-red-700">Please write a branch before offering it.</p>
         )}
         {error === "save" && (
           <p className="text-sm text-red-700">Something went wrong. Please try again.</p>
@@ -75,7 +75,7 @@ export default async function RenderPage({
 
         <div>
           <label htmlFor="body" className="block text-sm text-ink-soft">
-            Your rendering
+            Your branch
           </label>
           <textarea
             id="body"
@@ -145,7 +145,7 @@ export default async function RenderPage({
             type="submit"
             className="rounded-full bg-ink px-7 py-3 text-sm font-medium text-parchment transition-opacity hover:opacity-90"
           >
-            Offer this rendering
+            Offer this branch
           </button>
           <Link
             href={backTo}

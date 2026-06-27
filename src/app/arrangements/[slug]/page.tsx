@@ -87,7 +87,7 @@ export default async function ArrangementViewPage({
             href={`/read/${meta.slug}`}
             className="rounded-full bg-ink px-6 py-2.5 font-medium text-parchment transition-opacity hover:opacity-90"
           >
-            Read the book this way
+            Unseal this way
           </Link>
           {id && (
             <ResonanceControl
