@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { getUser } from "@/lib/auth";
+import { LightCTA } from "@/components/LightCTA";
 
 // The contribute entry point. Logged-out visitors are invited to sign in first
 // (then continue on to the reader, where every passage has "Offer a rendering");
@@ -18,8 +18,8 @@ export async function AddYourLight({
     ? CONTRIBUTE_TARGET
     : `/signin?next=${encodeURIComponent(CONTRIBUTE_TARGET)}`;
   return (
-    <Link href={href} className={className}>
+    <LightCTA href={href} className={className}>
       {children}
-    </Link>
+    </LightCTA>
   );
 }

@@ -32,7 +32,7 @@ export default async function HomePage() {
             >
               Read the gathering
             </Link>
-            <AddYourLight className="w-full rounded-full border border-gold-soft/60 px-7 py-3 text-center text-sm font-medium text-gold transition-colors hover:bg-glow sm:w-auto" />
+            <AddYourLight className="w-full text-sm sm:w-auto" />
           </div>
           <p className="ui mt-8 text-xs tracking-wide text-ink-faint">
             {stats.movements} movements · {stats.passages} passages ·{" "}
