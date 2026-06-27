@@ -1,6 +1,7 @@
 import Link from "next/link";
-import type { Rendering } from "@/lib/types";
+import type { Note, Rendering } from "@/lib/types";
 import { Prose } from "@/components/Prose";
+import { NoteLayer } from "@/components/NoteLayer";
 import { TenetList } from "@/components/TenetList";
 import { ResonanceControl } from "@/components/ResonanceControl";
 import { FlagControl } from "@/components/FlagControl";
@@ -16,6 +17,8 @@ export function RenderingArticle({
   resonated = false,
   path = "/",
   showTenetInfo = false,
+  notes,
+  canManageNotes = false,
 }: {
   rendering: Rendering;
   variant?: "gathered" | "alternative";
@@ -23,6 +26,8 @@ export function RenderingArticle({
   resonated?: boolean;
   path?: string;
   showTenetInfo?: boolean;
+  notes?: Note[];
+  canManageNotes?: boolean;
 }) {
   const isGathered = variant === "gathered";
   // Seed renderings are the project's own two tellings (no author profile).
@@ -72,9 +77,21 @@ export function RenderingArticle({
         )}
       </header>
 
-      <Prose className={isGathered ? "prose-gathered" : ""}>
-        {rendering.body}
-      </Prose>
+      {rendering.id ? (
+        <NoteLayer
+          renderingId={rendering.id}
+          body={rendering.body}
+          notes={notes ?? []}
+          path={path}
+          canCreate={signedIn}
+          canManage={canManageNotes}
+          proseClass={isGathered ? "prose-gathered" : ""}
+        />
+      ) : (
+        <Prose className={isGathered ? "prose-gathered" : ""}>
+          {rendering.body}
+        </Prose>
+      )}
 
       <footer className="mt-6 flex flex-col gap-4 border-t border-line/70 pt-4">
         <TenetList tenets={rendering.tenets} showInfo={showTenetInfo} />

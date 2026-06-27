@@ -10,6 +10,7 @@ import { getProfile } from "@/lib/auth";
 import { getMyResonatedIds } from "@/lib/resonance";
 import { getReflections } from "@/lib/data/reflections";
 import { getGatheredHistory } from "@/lib/data/gathering";
+import { getNotesByRendering } from "@/lib/data/notes";
 import { RenderingArticle } from "@/components/RenderingArticle";
 import { Reflections } from "@/components/Reflections";
 import { PassageNav } from "@/components/PassageNav";
@@ -65,20 +66,23 @@ export default async function PassagePage({
   const communityRenderings = alternatives.filter((r) => r.authorHandle);
 
   const path = `/read/${arrangement}/${passage}`;
-  const [profile, resonated, reflections, history, outline, arrangements] =
+  const renderingIds = p.renderings
+    .map((r) => r.id)
+    .filter((id): id is string => Boolean(id));
+  const [profile, resonated, reflections, history, outline, arrangements, notesByRendering] =
     await Promise.all([
       getProfile(),
-      getMyResonatedIds(
-        "rendering",
-        p.renderings.map((r) => r.id).filter((id): id is string => Boolean(id)),
-      ),
+      getMyResonatedIds("rendering", renderingIds),
       p.id ? getReflections("passage", p.id) : Promise.resolve([]),
       p.id ? getGatheredHistory(p.id) : Promise.resolve([]),
       getArrangementOutline(arrangement),
       getArrangementMetaList(),
+      getNotesByRendering(renderingIds),
     ]);
   const signedIn = Boolean(profile);
   const isSteward = profile?.role === "steward" || profile?.role === "admin";
+  const canManageNotes = (r: { authorHandle?: string }) =>
+    isSteward || (Boolean(profile) && profile!.handle === r.authorHandle);
   const offerHref = `/render/${p.slug}?arr=${arrangement}&entry=${passage}`;
 
   // Comparison mode: build the selectable texts (traditional + every rendering).
@@ -207,6 +211,8 @@ export default async function PassagePage({
             resonated={gathered.id ? resonated.has(gathered.id) : false}
             path={path}
             showTenetInfo
+            notes={gathered.id ? notesByRendering.get(gathered.id) : undefined}
+            canManageNotes={canManageNotes(gathered)}
           />
         </section>
       ) : (
@@ -241,6 +247,8 @@ export default async function PassagePage({
                 signedIn={signedIn}
                 resonated={r.id ? resonated.has(r.id) : false}
                 path={path}
+                notes={r.id ? notesByRendering.get(r.id) : undefined}
+                canManageNotes={canManageNotes(r)}
               />
             ))}
           </div>

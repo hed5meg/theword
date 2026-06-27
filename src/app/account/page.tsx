@@ -1,7 +1,23 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getProfile } from "@/lib/auth";
+import { createServerSupabase } from "@/lib/supabase/server";
 import { updateProfile } from "./actions";
+
+/** Read the email-notification preference gracefully (defaults on). */
+async function getEmailPref(userId: string): Promise<boolean> {
+  try {
+    const sb = await createServerSupabase();
+    const { data } = await sb
+      .from("profiles")
+      .select("email_notifications")
+      .eq("id", userId)
+      .maybeSingle();
+    return data?.email_notifications ?? true;
+  } catch {
+    return true;
+  }
+}
 
 export const dynamic = "force-dynamic";
 
@@ -21,6 +37,7 @@ export default async function AccountPage({
   const profile = await getProfile();
   if (!profile) redirect("/signin?next=/account");
   const { error } = await searchParams;
+  const emailOn = await getEmailPref(profile.id);
 
   return (
     <div className="mx-auto max-w-md px-5 py-14 sm:px-8">
@@ -68,6 +85,18 @@ export default async function AccountPage({
           defaultValue={profile.languages.join(", ")}
           hint="Comma-separated, optional."
         />
+        <label className="flex items-start gap-3 rounded-xl border border-line bg-card/50 px-4 py-3 text-sm text-ink-soft">
+          <input
+            type="checkbox"
+            name="email_notifications"
+            defaultChecked={emailOn}
+            className="mt-0.5 accent-[var(--color-gold)]"
+          />
+          <span>
+            Email me gentle notifications — when a note or reply lands on my
+            rendering, or one of my notes is tended. No nagging; turn off anytime.
+          </span>
+        </label>
         <button
           type="submit"
           className="w-full rounded-full bg-ink px-6 py-3 text-sm font-medium text-parchment transition-opacity hover:opacity-90"

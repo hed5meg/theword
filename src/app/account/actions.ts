@@ -38,6 +38,7 @@ export async function updateProfile(formData: FormData) {
       bio: bio || null,
       traditions: toList(formData.get("traditions")),
       languages: toList(formData.get("languages")),
+      email_notifications: formData.get("email_notifications") === "on",
     })
     .eq("id", user.id);
 

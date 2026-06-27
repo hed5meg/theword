@@ -1,9 +1,11 @@
 import Link from "next/link";
 import { getProfile } from "@/lib/auth";
+import { getNoteCount } from "@/lib/data/notes";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
 export async function SiteHeader() {
   const profile = await getProfile();
+  const noteCount = profile ? await getNoteCount() : 0;
 
   return (
     <header className="border-b border-line/70">
@@ -39,6 +41,12 @@ export async function SiteHeader() {
                   Steward
                 </Link>
               )}
+              <Link
+                href="/notes"
+                className="text-ink-soft transition-colors hover:text-ink"
+              >
+                Notes{noteCount > 0 ? ` (${noteCount})` : ""}
+              </Link>
               <Link
                 href={`/members/${profile.handle}`}
                 className="text-ink-soft transition-colors hover:text-ink"

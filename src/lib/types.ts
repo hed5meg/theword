@@ -181,6 +181,39 @@ export interface ArrangementPassageLocation {
   next: ArrangementNavRef | null;
 }
 
+// ---- Margin Notes ----------------------------------------------------------
+export interface NoteReply {
+  id: string;
+  authorName: string;
+  authorHandle?: string;
+  body: string;
+  createdAt: string;
+}
+
+export interface Note {
+  id: string;
+  renderingId: string;
+  quotedText: string;
+  anchorStart: number;
+  anchorEnd: number;
+  contextPrefix: string;
+  contextSuffix: string;
+  body: string;
+  suggestedWording?: string;
+  status: "open" | "acknowledged" | "addressed" | "archived";
+  orphaned: boolean;
+  createdAt: string;
+  authorName: string;
+  authorHandle?: string;
+  replies: NoteReply[];
+}
+
+export interface InboxNote extends Note {
+  passageTitle: string;
+  passageHref: string;
+  renderingAuthor: string;
+}
+
 export interface ArrangementCard extends ArrangementMeta {
   id: string;
   movementCount: number;
