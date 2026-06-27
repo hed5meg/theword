@@ -432,6 +432,128 @@ const CANONICAL_NAMES: Record<string, { slug: string; title: string }> = {
   "the-city-home": { slug: "the-new-jerusalem", title: "The New Jerusalem" },
 };
 
+// The original love-ordered movement names, keyed by the (now KJV) movement slug.
+// Used to seed The Love-Ordered Arrangement with its original names.
+const LOVE_MOVEMENTS: Record<string, { slug: string; title: string }> = {
+  "the-revelation-of-jesus-christ": {
+    slug: "the-opening-of-the-veil",
+    title: "The Opening of the Veil",
+  },
+  "the-woman-and-the-dragon": {
+    slug: "the-mother-and-the-dragon",
+    title: "The Mother and the Dragon",
+  },
+  "the-seven-churches": { slug: "the-long-road-home", title: "The Long Road Home" },
+  "the-throne-and-the-seven-seals": {
+    slug: "the-throne-and-the-scroll",
+    title: "The Throne and the Scroll",
+  },
+  "the-seven-trumpets": { slug: "the-great-waking", title: "The Great Waking" },
+  "the-beast-and-babylon": {
+    slug: "the-beast-and-babylon",
+    title: "The Beast and Babylon",
+  },
+  "the-new-heaven-and-the-new-earth": {
+    slug: "the-homecoming",
+    title: "The Homecoming",
+  },
+};
+
+export interface ArrangementMovementSeed {
+  title: string;
+  subtitle?: string;
+}
+export interface ArrangementEntrySeed {
+  /** Base (KJV) slug of the passage — used to resolve the passage id. */
+  passageBaseSlug: string;
+  orderIndex: number;
+  /** Per-arrangement display overrides (omitted = use the passage base name). */
+  title?: string;
+  slug?: string;
+  /** Index into the arrangement's movements array (omitted = ungrouped). */
+  movementIndex?: number;
+}
+export interface ArrangementSeed {
+  slug: string;
+  title: string;
+  description: string;
+  isDefault: boolean;
+  isSystem: boolean;
+  movements: ArrangementMovementSeed[];
+  entries: ArrangementEntrySeed[];
+}
+
+/** Parse a canonical reference like "Rev 4:1-5:14" into a sortable key. */
+function refSortKey(ref: string): number {
+  const m = /Rev\s+(\d+):(\d+)/.exec(ref);
+  if (!m) return 0;
+  return Number(m[1]) * 1000 + Number(m[2]);
+}
+
+/**
+ * Build the two built-in arrangements:
+ *  - The Love-Ordered Arrangement (default): the current order, with the
+ *    original love names for movements and passages.
+ *  - The Canonical Order (system): flat, Rev 1→22, using each passage's base
+ *    (KJV) name.
+ */
+export async function buildArrangements(): Promise<{
+  love: ArrangementSeed;
+  canonical: ArrangementSeed;
+}> {
+  const { full } = await loadContent();
+
+  // Movements in their existing order, with love names + the unchanged summaries.
+  const loveMovements: ArrangementMovementSeed[] = MOVEMENTS.map((m) => ({
+    title: LOVE_MOVEMENTS[m.slug]?.title ?? m.title,
+    subtitle: m.summary,
+  }));
+  const movementIndexBySlug = new Map(MOVEMENTS.map((m, i) => [m.slug, i]));
+
+  const loveEntries: ArrangementEntrySeed[] = PASSAGES.map((def, i) => {
+    const section = full.get(def.full);
+    const baseSlug = CANONICAL_NAMES[def.full]?.slug ?? def.full;
+    return {
+      passageBaseSlug: baseSlug,
+      orderIndex: i,
+      title: section?.heading ?? def.full, // original love title
+      slug: def.full, // original love slug
+      movementIndex: movementIndexBySlug.get(def.movement),
+    };
+  });
+
+  // Canonical: same passages, no movements, sorted by reference, base names.
+  const canonicalEntries: ArrangementEntrySeed[] = PASSAGES.map((def) => ({
+    passageBaseSlug: CANONICAL_NAMES[def.full]?.slug ?? def.full,
+    canonicalRef: def.canonicalRef,
+  }))
+    .sort((a, b) => refSortKey(a.canonicalRef) - refSortKey(b.canonicalRef))
+    .map((e, i) => ({ passageBaseSlug: e.passageBaseSlug, orderIndex: i }));
+
+  return {
+    love: {
+      slug: "the-love-ordered-arrangement",
+      title: "The Love-Ordered Arrangement",
+      description:
+        "The current gathering — Revelation retold in love's order, from the first garden to the last.",
+      isDefault: true,
+      isSystem: false,
+      movements: loveMovements,
+      entries: loveEntries,
+    },
+    canonical: {
+      slug: "the-canonical-order",
+      title: "The Canonical Order",
+      description:
+        "Revelation in its traditional order, chapter by chapter (KJV) — the familiar on-ramp, always available.",
+      isDefault: false,
+      isSystem: true,
+      movements: [],
+      entries: canonicalEntries,
+    },
+  };
+}
+
 function toTenet(parsed: ParsedTenet): Tenet {
   return { ...parsed, resonanceCount: 0 };
 }

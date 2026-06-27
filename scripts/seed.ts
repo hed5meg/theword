@@ -10,7 +10,8 @@
  */
 import "./load-env";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { buildBook, buildTenets } from "@/lib/content/seed";
+import { buildBook, buildTenets, buildArrangements } from "@/lib/content/seed";
+import type { ArrangementSeed } from "@/lib/content/seed";
 
 async function main() {
   const db = createAdminClient();
@@ -55,6 +56,7 @@ async function main() {
   // 3. Passages + renderings ------------------------------------------------
   let passageCount = 0;
   let renderingCount = 0;
+  const passageIdBySlug = new Map<string, string>();
 
   for (const movement of book) {
     for (const passage of movement.passages) {
@@ -77,6 +79,7 @@ async function main() {
         .single();
       if (pErr) throw pErr;
       const pId = passageRow!.id as string;
+      passageIdBySlug.set(passage.slug, pId);
       passageCount++;
 
       // Re-seed renderings cleanly so reruns stay idempotent.
@@ -123,6 +126,67 @@ async function main() {
   }
 
   console.log(`✦ ${passageCount} passages, ${renderingCount} renderings`);
+
+  // 4. Arrangements ---------------------------------------------------------
+  const { love, canonical } = await buildArrangements();
+
+  async function seedArrangement(arr: ArrangementSeed) {
+    // Clean re-seed: remove any prior copy of this arrangement (cascades).
+    await db.from("arrangements").delete().eq("slug", arr.slug);
+
+    const { data: arrRow, error: aErr } = await db
+      .from("arrangements")
+      .insert({
+        title: arr.title,
+        slug: arr.slug,
+        description: arr.description,
+        status: "published",
+        is_default: arr.isDefault,
+        is_system: arr.isSystem,
+      })
+      .select("id")
+      .single();
+    if (aErr) throw aErr;
+    const arrId = arrRow!.id as string;
+
+    const movementIds: string[] = [];
+    for (let i = 0; i < arr.movements.length; i++) {
+      const m = arr.movements[i];
+      const { data: mRow, error: mErr } = await db
+        .from("arrangement_movements")
+        .insert({
+          arrangement_id: arrId,
+          title: m.title,
+          subtitle: m.subtitle ?? null,
+          order_index: i,
+        })
+        .select("id")
+        .single();
+      if (mErr) throw mErr;
+      movementIds.push(mRow!.id as string);
+    }
+
+    const rows = arr.entries.map((e) => {
+      const passageId = passageIdBySlug.get(e.passageBaseSlug);
+      if (!passageId) throw new Error(`Arrangement: no passage for "${e.passageBaseSlug}"`);
+      return {
+        arrangement_id: arrId,
+        passage_id: passageId,
+        order_index: e.orderIndex,
+        title: e.title ?? null,
+        slug: e.slug ?? null,
+        arrangement_movement_id:
+          e.movementIndex != null ? movementIds[e.movementIndex] : null,
+      };
+    });
+    const { error: eErr } = await db.from("arrangement_entries").insert(rows);
+    if (eErr) throw eErr;
+    console.log(`✦ arrangement "${arr.title}" (${rows.length} entries)`);
+  }
+
+  await seedArrangement(love);
+  await seedArrangement(canonical);
+
   console.log("\nThe gathering is seeded. Nothing is final.");
 }
 
