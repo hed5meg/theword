@@ -90,7 +90,7 @@ export default async function MemberPage({
         {renderings.length > 0 ? (
           <ul className="mt-5 divide-y divide-line/70 overflow-hidden rounded-2xl border border-line bg-card/50">
             {renderings.map((r) => (
-              <li key={`${r.movementSlug}/${r.passageSlug}`}>
+              <li key={r.passageSlug}>
                 <Link
                   href={`/read/the-canonical-order/${r.passageSlug}`}
                   className="flex items-baseline justify-between gap-4 px-5 py-4 transition-colors hover:bg-glow/50"

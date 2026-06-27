@@ -2,7 +2,6 @@ import Link from "next/link";
 import { getProfile } from "@/lib/auth";
 import { getNoteCount } from "@/lib/data/notes";
 import { getRefinementCount } from "@/lib/data/refinements";
-import { ThemeToggle } from "@/components/ThemeToggle";
 
 export async function SiteHeader() {
   const profile = await getProfile();
@@ -13,12 +12,20 @@ export async function SiteHeader() {
   return (
     <header className="border-b border-line/70">
       <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-x-4 gap-y-2 px-5 py-4 sm:px-8">
-        <Link href="/" className="group flex min-w-0 items-baseline gap-2.5">
-          <span aria-hidden className="text-gold-soft">
-            ✦
-          </span>
+        <Link href="/" className="group flex min-w-0 items-center gap-2.5">
+          <svg
+            aria-hidden
+            viewBox="0 0 24 24"
+            className="size-6 shrink-0 text-gold-soft"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+          >
+            <circle cx="12" cy="12" r="10" />
+            <rect x="8" y="8" width="8" height="8" />
+          </svg>
           <span className="font-serif text-lg tracking-tight text-ink">
-            The Unsealed Revelation
+            The Word Revealed
           </span>
         </Link>
         <nav className="ui flex flex-1 flex-wrap items-center justify-end gap-x-4 gap-y-2 text-sm sm:gap-5">
@@ -79,7 +86,6 @@ export async function SiteHeader() {
               Add your light
             </Link>
           )}
-          <ThemeToggle />
         </nav>
       </div>
     </header>

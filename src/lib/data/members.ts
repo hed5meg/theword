@@ -38,7 +38,6 @@ export async function getProfileByHandle(handle: string): Promise<Profile | null
 export interface MemberRendering {
   passageTitle: string;
   canonicalRef: string;
-  movementSlug: string;
   passageSlug: string;
   isGathered: boolean;
 }
@@ -49,13 +48,16 @@ export async function getMemberRenderings(
 ): Promise<MemberRendering[]> {
   const sb = createAnonClient();
   if (!sb) return [];
-  const { data } = await sb
+  // Disambiguate: renderings ↔ passages has two FKs (passage_id and the
+  // passage's current_rendering_id); we want the rendering's own passage.
+  const { data, error } = await sb
     .from("renderings")
     .select(
-      "id,status,passages!inner(slug,title,canonical_ref,order_index,current_rendering_id,movements!inner(slug))",
+      "id,status,passages!renderings_passage_id_fkey!inner(slug,title,canonical_ref,order_index,current_rendering_id)",
     )
     .eq("author_id", profileId)
     .neq("status", "draft");
+  if (error || !data) return [];
 
   type Row = {
     id: string;
@@ -65,16 +67,14 @@ export async function getMemberRenderings(
       canonical_ref: string;
       order_index: number;
       current_rendering_id: string | null;
-      movements: { slug: string };
     };
   };
 
-  return ((data ?? []) as unknown as Row[])
+  return (data as unknown as Row[])
     .sort((a, b) => a.passages.order_index - b.passages.order_index)
     .map((r) => ({
       passageTitle: r.passages.title,
       canonicalRef: r.passages.canonical_ref,
-      movementSlug: r.passages.movements.slug,
       passageSlug: r.passages.slug,
       isGathered: r.id === r.passages.current_rendering_id,
     }));

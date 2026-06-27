@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getProfile } from "@/lib/auth";
 import { createServerSupabase } from "@/lib/supabase/server";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { updateProfile } from "./actions";
 
 /** Read the email-notification preference gracefully (defaults on). */
@@ -104,6 +105,16 @@ export default async function AccountPage({
           Save
         </button>
       </form>
+
+      <section className="mt-10 border-t border-line/70 pt-8">
+        <h2 className="font-serif text-xl text-ink">Appearance</h2>
+        <div className="mt-3 flex items-center justify-between gap-4">
+          <p className="text-sm text-ink-soft">
+            Light, dark, or follow your device.
+          </p>
+          <ThemeToggle />
+        </div>
+      </section>
     </div>
   );
 }
