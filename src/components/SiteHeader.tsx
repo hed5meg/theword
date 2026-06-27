@@ -24,7 +24,7 @@ export async function SiteHeader() {
             <circle cx="12" cy="12" r="10" />
             <rect x="5" y="5" width="14" height="14" />
           </svg>
-          <span className="font-serif text-lg tracking-tight text-ink">
+          <span className="hidden font-serif text-lg tracking-tight text-ink sm:inline">
             The Word Revealed
           </span>
         </Link>
