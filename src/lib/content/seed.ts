@@ -15,7 +15,7 @@ import { loadContent, type ParsedTenet } from "@/lib/content/parse";
 // steward choice, never a ranking.
 // ---------------------------------------------------------------------------
 
-const FULL_SOURCE = "The Unsealed Revelation";
+const FULL_SOURCE = "The Seed";
 const VISION_SOURCE = "A Vision";
 
 interface MovementDef {

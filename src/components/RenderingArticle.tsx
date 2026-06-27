@@ -36,13 +36,6 @@ export function RenderingArticle({
 }) {
   const isGathered = variant === "gathered";
   const big = isGathered || primary;
-  // Seed renderings are the project's own two tellings (no author profile).
-  const isSeed = !rendering.authorHandle;
-  const seedDescriptor = isSeed
-    ? rendering.author === "A Vision"
-      ? "The project's plainer vision telling"
-      : "The project's fuller telling"
-    : null;
 
   return (
     <article className={big ? "" : "rounded-2xl border border-line bg-card/50 p-6 sm:p-8"}>
@@ -50,11 +43,6 @@ export function RenderingArticle({
         {isGathered && (
           <span className="rounded-full bg-glow px-3 py-1 text-xs font-medium tracking-wide text-gold">
             Gathered Rendering
-          </span>
-        )}
-        {isSeed && (
-          <span className="rounded-full border border-line bg-parchment-deep/70 px-3 py-1 text-xs font-medium tracking-wide text-ink-soft">
-            Seed telling
           </span>
         )}
         {rendering.authorHandle ? (
@@ -66,12 +54,6 @@ export function RenderingArticle({
           </Link>
         ) : (
           <span className="text-ink-soft">{rendering.author}</span>
-        )}
-        {seedDescriptor && (
-          <>
-            <span aria-hidden>·</span>
-            <span className="italic">{seedDescriptor}</span>
-          </>
         )}
         <span aria-hidden>·</span>
         <span>{rendering.language}</span>
