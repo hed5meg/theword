@@ -193,6 +193,18 @@ That is who can stand: not the strongest, not the spared — the ones who were l
 
 ---
 
+### The open book
+
+And a messenger comes down, wrapped in a cloud, with a rainbow over his head and his feet upon the sea and the land — and in his hand a little book, open. The great scroll that no one could open has a small, open child now, handed down into the world for anyone to hold.
+
+He cries out, and seven thunders answer. But when their words are about to be written down, a voice from heaven says: *leave those sealed.* For some of the Word is too alive to fit on a page; it is not read but felt, spoken straight into you, heart to heart. Even when the whole book is opened, a holy mystery stays — a part of God you will only ever meet in person.
+
+Then the voice says: *take the little book, and eat it.* Not read it — eat it, until the Word is no longer ink but part of your own body. And it is sweet as honey in the mouth, and then bitter once it is inside — sweet, because there is nothing sweeter than knowing who you are; bitter, because once you carry it you begin to feel the ache of a world that has not yet woken. Sweet to know. Bitter to carry. That is how you know it has truly gone in.
+
+And then the reason for all of it: *now go, and speak it — to every people, and nation, and tongue.* The Word goes in so that it can come back out, carried to the whole family, until everyone has heard.
+
+---
+
 ### The waking, and the emptying of the cup
 
 Then trumpets sound — but a trumpet is not a weapon. It is an alarm, to wake the sleeping. Each one touches only a part, never the whole, because a warning is meant to rouse you, not to end you. And beneath them all is one quiet truth: *you cannot frighten anyone into love.* Fear can wake a person; only love can gather them. So the trumpets wake, and then they fall silent, and the gentler thing begins.

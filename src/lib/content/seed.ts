@@ -31,8 +31,13 @@ interface PassageDef {
   vision?: string;
   movement: string;
   canonicalRef: string;
-  /** Public-domain KJV anchor text shown alongside for grounding. */
-  kjv: string;
+  /**
+   * Optional short KJV anchor — a fallback only. The full public-domain KJV for
+   * each reference is loaded from content/kjv-passages.json (the source of truth
+   * for traditional text); see content/unsealed-revelation-passage-map.md for
+   * the authoritative passage→reference mapping.
+   */
+  kjv?: string;
   /** Founding tenets this passage is read through (by exact title). */
   tenets: string[];
 }
@@ -87,8 +92,7 @@ const PASSAGES: PassageDef[] = [
     full: "a-word-before-the-book",
     vision: "do-not-be-afraid",
     movement: "the-opening-of-the-veil",
-    canonicalRef: "Rev 1:1-8",
-    kjv: "The Revelation of Jesus Christ, which God gave unto him, to shew unto his servants things which must shortly come to pass… I am Alpha and Omega, the beginning and the ending, saith the Lord, which is, and which was, and which is to come, the Almighty.",
+    canonicalRef: "Rev 1:1-20",
     tenets: [
       "God is love, and love has no wrath",
       "Christ is the Word",
@@ -159,8 +163,7 @@ const PASSAGES: PassageDef[] = [
     full: "the-friend-of-god",
     vision: "the-friend-of-god-the-promise-of-a-family-as-countless-as-the-stars",
     movement: "the-long-road-home",
-    canonicalRef: "Rev 2:8-17",
-    kjv: "Be thou faithful unto death, and I will give thee a crown of life… To him that overcometh will I give to eat of the hidden manna, and will give him a white stone, and in the stone a new name written, which no man knoweth saving he that receiveth it.",
+    canonicalRef: "Rev 2:18-29",
     tenets: [
       "The whole family is one — living and dead, every nation and tongue",
       "We are children of God, becoming like Him",
@@ -170,8 +173,7 @@ const PASSAGES: PassageDef[] = [
     full: "the-open-heart",
     vision: "the-king-who-opened-his-heart-the-promise-of-an-everlasting-house",
     movement: "the-long-road-home",
-    canonicalRef: "Rev 2:18-29",
-    kjv: "I know thy works, and charity, and service, and faith, and thy patience, and thy works; and the last to be more than the first.",
+    canonicalRef: "Rev 2:12-17",
     tenets: [
       "Charity is every attribute of God held in harmony",
       "The three loves",
@@ -181,16 +183,14 @@ const PASSAGES: PassageDef[] = [
     full: "the-witnesses",
     vision: "the-witnesses-the-promise-of-resurrection",
     movement: "the-long-road-home",
-    canonicalRef: "Rev 1:9-20",
-    kjv: "Fear not; I am the first and the last: I am he that liveth, and was dead; and, behold, I am alive for evermore, Amen; and have the keys of hell and of death.",
+    canonicalRef: "Rev 2:8-11",
     tenets: ["Christ is the Word", "God is love, and love has no wrath"],
   },
   {
     full: "the-harvest-today",
     vision: "today-the-promise-of-the-gathering-and-the-tree-of-life",
     movement: "the-long-road-home",
-    canonicalRef: "Rev 14:1-16",
-    kjv: "And I looked, and, lo, a Lamb stood on the mount Sion, and with him an hundred forty and four thousand, having his Father's name written in their foreheads… Blessed are the dead which die in the Lord… that they may rest from their labours; and their works do follow them.",
+    canonicalRef: "Rev 2:1-7",
     tenets: [
       "The tares are lies, not people",
       "The work is to gather all into one",
@@ -242,11 +242,17 @@ const PASSAGES: PassageDef[] = [
     ],
   },
   {
+    // NEW passage (Rev 10) — the trumpet-interlude, placed right after Trumpets.
+    full: "the-open-book-and-the-sealed-thunder",
+    movement: "the-great-waking",
+    canonicalRef: "Rev 10:1-11",
+    tenets: ["The book is meant to be unsealed", "Christ is the Word"],
+  },
+  {
     full: "the-two-who-stand-together",
     vision: "the-two-who-stand-together",
     movement: "the-great-waking",
-    canonicalRef: "Rev 11:1-14",
-    kjv: "And I will give power unto my two witnesses, and they shall prophesy a thousand two hundred and threescore days, clothed in sackcloth.",
+    canonicalRef: "Rev 11:1-19",
     tenets: [
       "The whole family is one — living and dead, every nation and tongue",
       "Christ is the Word",
@@ -256,8 +262,7 @@ const PASSAGES: PassageDef[] = [
     full: "the-whole-earth-remembers",
     vision: "the-whole-earth-remembers",
     movement: "the-great-waking",
-    canonicalRef: "Rev 11:15-19",
-    kjv: "The kingdoms of this world are become the kingdoms of our Lord, and of his Christ; and he shall reign for ever and ever.",
+    canonicalRef: "Rev 14:1-20",
     tenets: [
       "The work is to gather all into one",
       "Gather every truth from every people",
@@ -278,8 +283,7 @@ const PASSAGES: PassageDef[] = [
   {
     full: "the-bowls-emptying-the-cup",
     movement: "the-beast-and-babylon",
-    canonicalRef: "Rev 16:1-21",
-    kjv: "And I heard a great voice out of the temple saying to the seven angels, Go your ways, and pour out the vials of the wrath of God upon the earth.",
+    canonicalRef: "Rev 15:1-16:21",
     tenets: [
       "Calamity is consequence, not God's wrath",
       "God is love, and love has no wrath",
