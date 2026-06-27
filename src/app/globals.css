@@ -82,6 +82,7 @@ body {
   font-family: var(--font-serif);
   font-size: 1.0625rem;
   line-height: 1.75;
+  overflow-x: hidden;
 }
 
 ::selection {

@@ -26,13 +26,13 @@ export function ArrangementSelector({
   }
 
   return (
-    <label className="ui inline-flex items-center gap-2 text-sm text-ink-soft">
-      <span className="text-ink-faint">Reading:</span>
+    <label className="ui flex min-w-0 max-w-full items-center gap-2 text-sm text-ink-soft">
+      <span className="shrink-0 text-ink-faint">Reading:</span>
       <select
         value={current}
         onChange={onChange}
         aria-label="Choose an arrangement to read"
-        className="rounded-full border border-line bg-card px-3 py-1.5 text-ink outline-none focus:border-gold-soft"
+        className="min-w-0 max-w-full truncate rounded-full border border-line bg-card px-3 py-1.5 text-ink outline-none focus:border-gold-soft"
       >
         {arrangements.map((a) => (
           <option key={a.slug} value={a.slug}>

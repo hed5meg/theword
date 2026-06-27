@@ -48,11 +48,11 @@ export default async function ArrangementTOC({
             {meta.description}
           </p>
         )}
-        <div className="mt-6 flex items-center justify-center gap-3">
+        <div className="mt-6 flex flex-col items-center gap-2 px-2 sm:flex-row sm:justify-center sm:gap-3">
           <ArrangementSelector arrangements={arrangements} current={meta.slug} />
           <Link
             href="/arrangements"
-            className="ui text-sm text-gold transition-colors hover:text-ink"
+            className="ui shrink-0 text-sm text-gold transition-colors hover:text-ink"
           >
             All arrangements →
           </Link>

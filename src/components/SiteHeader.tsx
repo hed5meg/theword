@@ -12,8 +12,8 @@ export async function SiteHeader() {
 
   return (
     <header className="border-b border-line/70">
-      <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-5 py-4 sm:px-8">
-        <Link href="/" className="group flex items-baseline gap-2.5">
+      <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-x-4 gap-y-2 px-5 py-4 sm:px-8">
+        <Link href="/" className="group flex min-w-0 items-baseline gap-2.5">
           <span aria-hidden className="text-gold-soft">
             ✦
           </span>
@@ -21,7 +21,7 @@ export async function SiteHeader() {
             The Unsealed Revelation
           </span>
         </Link>
-        <nav className="ui flex items-center gap-4 text-sm sm:gap-5">
+        <nav className="ui flex flex-1 flex-wrap items-center justify-end gap-x-4 gap-y-2 text-sm sm:gap-5">
           <Link href="/read" className="text-ink-soft transition-colors hover:text-ink">
             Read
           </Link>

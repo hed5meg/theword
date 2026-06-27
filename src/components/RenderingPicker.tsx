@@ -23,13 +23,13 @@ export function RenderingPicker({
     router.replace(url, { scroll: false });
   }
   return (
-    <label className="ui inline-flex items-center gap-2 text-sm text-ink-soft">
-      <span className="text-ink-faint">Rendering:</span>
+    <label className="ui flex min-w-0 max-w-full items-center gap-2 text-sm text-ink-soft">
+      <span className="shrink-0 text-ink-faint">Rendering:</span>
       <select
         value={current}
         onChange={onChange}
         aria-label="Choose a rendering to read"
-        className="rounded-full border border-line bg-card px-3 py-1.5 text-ink outline-none focus:border-gold-soft"
+        className="min-w-0 max-w-full truncate rounded-full border border-line bg-card px-3 py-1.5 text-ink outline-none focus:border-gold-soft"
       >
         {options.map((o) => (
           <option key={o.key} value={o.key}>
