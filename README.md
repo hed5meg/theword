@@ -81,14 +81,31 @@ No environment variables are needed to read the seeded book.
    - `NEXT_PUBLIC_SUPABASE_URL`
    - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
    - `SUPABASE_SERVICE_ROLE_KEY` (server only; used by the seed script)
-3. Run the schema migration in the Supabase SQL editor (or via the Supabase CLI):
-   `supabase/migrations/0001_init.sql`
+3. Run the schema migrations in the Supabase SQL editor (or via the Supabase CLI),
+   in order:
+   - `supabase/migrations/0001_init.sql`
+   - `supabase/migrations/0002_auth.sql` (profile trigger + timestamps)
 4. Seed it:
    ```bash
    npm run seed
    ```
 
 `.env.local` is gitignored — never commit keys.
+
+### Authentication setup (required for sign-in)
+
+Email magic links need Supabase to allow the app's redirect URLs.
+In the Supabase dashboard → **Authentication → URL Configuration**:
+
+- **Site URL:** `https://theword.love`
+- **Redirect URLs** (allow list):
+  - `https://theword.love/**`
+  - `https://theword-nine.vercel.app/**`
+  - `http://localhost:3000/**`
+
+Magic links land on `/auth/callback`, which exchanges the code for a session and
+ensures a profile exists. (Supabase's built-in email works for low volume; wire a
+custom SMTP provider before launch.)
 
 ## Project structure
 
@@ -110,10 +127,22 @@ src/
     supabase.ts                  Supabase client helpers
 ```
 
+## Milestone 2 — what's built
+
+- **Reads come from Supabase** (live, collaborative); seed content remains a
+  fallback. Reader pages are dynamic.
+- **Accounts** via email magic link (Supabase SSR), with auto-created profiles,
+  an editable account, and public member profiles (a member's rendering of the book).
+- **Submit a rendering** for any passage, citing the tenets you read by, with a
+  language and optional tradition. It appears side by side immediately.
+- **Tenets library** — browse by group, read each tenet with its supporting
+  wisdom and the renderings that cite it, and offer new tenets.
+- **Resonance** — additive "this resonates" on renderings and tenets; give it or
+  quietly withdraw it. Never a downvote.
+- **Reflections** — gentle, threaded discussion on passages and tenets.
+
 ## What's next (suggested milestone order)
 
-- **M2** — accounts (email magic link) + submit a rendering + tenets library +
-  resonance + reflections. Move reads onto Supabase.
 - **M3** — stewardship: promote Gathered Renderings with history, flagging,
   guidelines.
 - **M4** — inline suggestions, version-history UI with diffs, search.
