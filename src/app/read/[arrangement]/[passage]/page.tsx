@@ -4,7 +4,6 @@ import { notFound } from "next/navigation";
 import {
   getArrangementPassage,
   getArrangementOutline,
-  getArrangementMetaList,
 } from "@/lib/data/arrangements";
 import { getTenets } from "@/lib/data";
 import { getProfile } from "@/lib/auth";
@@ -16,7 +15,6 @@ import { RenderingArticle } from "@/components/RenderingArticle";
 import { RenderingPicker } from "@/components/RenderingPicker";
 import { Reflections } from "@/components/Reflections";
 import { PassageNav } from "@/components/PassageNav";
-import { ArrangementSelector } from "@/components/ArrangementSelector";
 import { RememberArrangement } from "@/components/RememberArrangement";
 import {
   StewardPassageTools,
@@ -86,14 +84,13 @@ export default async function PassagePage({
   const renderingIds = p.renderings
     .map((r) => r.id)
     .filter((id): id is string => Boolean(id));
-  const [profile, resonated, reflections, history, outline, arrangements, notesByRendering] =
+  const [profile, resonated, reflections, history, outline, notesByRendering] =
     await Promise.all([
       getProfile(),
       getMyResonatedIds("rendering", renderingIds),
       p.id ? getReflections("passage", p.id) : Promise.resolve([]),
       p.id ? getGatheredHistory(p.id) : Promise.resolve([]),
       getArrangementOutline(arrangement),
-      getArrangementMetaList(),
       getNotesByRendering(renderingIds),
     ]);
   const allTenets = (await getTenets()).map((t) => ({ slug: t.slug, title: t.title }));
@@ -149,18 +146,15 @@ export default async function PassagePage({
             </>
           )}
         </nav>
-        <div className="flex items-center gap-3">
-          <ArrangementSelector arrangements={arrangements} current={arr.slug} />
-          {outline && (
-            <PassageNav
-              arrangementSlug={arr.slug}
-              groups={outline.groups}
-              currentSlug={passage}
-              position={position}
-              total={total}
-            />
-          )}
-        </div>
+        {outline && (
+          <PassageNav
+            arrangementSlug={arr.slug}
+            groups={outline.groups}
+            currentSlug={passage}
+            position={position}
+            total={total}
+          />
+        )}
       </div>
 
       <header className="flex items-start justify-between gap-4 border-b border-line/70 pb-8">
