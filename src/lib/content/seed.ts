@@ -358,7 +358,7 @@ export async function buildTenets(): Promise<Tenet[]> {
 }
 
 export async function buildBook(): Promise<Movement[]> {
-  const { full, vision } = await loadContent();
+  const { full, vision, kjvByRef } = await loadContent();
   const { byTitle } = await tenetIndex();
 
   const movementMap = new Map<string, Movement>(
@@ -418,7 +418,8 @@ export async function buildBook(): Promise<Movement[]> {
       canonicalRef: def.canonicalRef,
       title: fullSection.heading,
       orderIndex: index,
-      traditionalText: def.kjv,
+      // Full public-domain KJV for the reference, with the anchor as a fallback.
+      traditionalText: kjvByRef[def.canonicalRef] ?? def.kjv,
       gatheredRendering: gathered,
       renderings,
     };

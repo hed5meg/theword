@@ -8,9 +8,7 @@
  * each passage (the fuller telling promoted as the initial Gathered Rendering,
  * "A Vision" held beside it). Idempotent: safe to run again.
  */
-import { config } from "dotenv";
-config({ path: ".env.local" });
-
+import "./load-env";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { buildBook, buildTenets } from "@/lib/content/seed";
 

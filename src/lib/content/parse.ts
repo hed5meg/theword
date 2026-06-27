@@ -94,16 +94,18 @@ let cache: {
   vision: Map<string, Section>;
   tenets: ParsedTenet[];
   mission: string;
+  kjvByRef: Record<string, string>;
 } | null = null;
 
 export async function loadContent() {
   if (cache) return cache;
 
-  const [fullRaw, visionRaw, tenetsRaw, missionRaw] = await Promise.all([
+  const [fullRaw, visionRaw, tenetsRaw, missionRaw, kjvByRef] = await Promise.all([
     read(CONTENT_DIR, "the-unsealed-revelation.md"),
     read(CONTENT_DIR, "the-unsealed-revelation-vision.md"),
     read(DOCS_DIR, "unsealed-revelation-seed-tenets.md"),
     read(CONTENT_DIR, "the-word-mission.md"),
+    readJson(CONTENT_DIR, "kjv-passages.json"),
   ]);
 
   cache = {
@@ -111,8 +113,18 @@ export async function loadContent() {
     vision: bySlug(splitSections(visionRaw, 3)),
     tenets: parseTenets(tenetsRaw),
     mission: missionRaw.trim(),
+    kjvByRef,
   };
   return cache;
+}
+
+/** Read a JSON content file, returning {} if it isn't present. */
+async function readJson(dir: string, file: string): Promise<Record<string, string>> {
+  try {
+    return JSON.parse(await fs.readFile(path.join(dir, file), "utf8"));
+  } catch {
+    return {};
+  }
 }
 
 /**

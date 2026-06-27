@@ -89,7 +89,9 @@ export default async function PassagePage({
               ⌄
             </span>
           </summary>
-          <p className="prose-traditional mt-4">{p.traditionalText}</p>
+          <p className="prose-traditional mt-4 max-h-[60vh] overflow-y-auto">
+            {p.traditionalText}
+          </p>
         </details>
       )}
 
