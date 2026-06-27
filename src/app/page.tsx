@@ -2,6 +2,8 @@ import Link from "next/link";
 import { Prose } from "@/components/Prose";
 import { getMission, getStats } from "@/lib/data";
 
+export const dynamic = "force-dynamic";
+
 export default async function HomePage() {
   const [mission, stats] = await Promise.all([getMission(), getStats()]);
 

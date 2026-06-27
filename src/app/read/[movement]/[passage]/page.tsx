@@ -1,17 +1,12 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getBook, getPassage } from "@/lib/data";
+import { getPassage } from "@/lib/data";
 import { RenderingArticle } from "@/components/RenderingArticle";
 
-type Params = { movement: string; passage: string };
+export const dynamic = "force-dynamic";
 
-export async function generateStaticParams() {
-  const book = await getBook();
-  return book.flatMap((m) =>
-    m.passages.map((p) => ({ movement: m.slug, passage: p.slug })),
-  );
-}
+type Params = { movement: string; passage: string };
 
 export async function generateMetadata({
   params,
@@ -36,7 +31,7 @@ export default async function PassagePage({
   const found = await getPassage(movement, passage);
   if (!found) notFound();
 
-  const { passage: p, movement: m, previous, next } = found;
+  const { passage: p, movementTitle, previous, next } = found;
   const gathered = p.gatheredRendering;
   const alternatives = p.renderings.filter((r) => !r.isGathered);
 
@@ -48,7 +43,7 @@ export default async function PassagePage({
           The gathering
         </Link>
         <span aria-hidden>›</span>
-        <span className="text-ink-soft">{m.title}</span>
+        <span className="text-ink-soft">{movementTitle}</span>
       </nav>
 
       <header className="border-b border-line/70 pb-8">

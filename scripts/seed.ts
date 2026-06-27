@@ -11,7 +11,7 @@
 import { config } from "dotenv";
 config({ path: ".env.local" });
 
-import { createAdminClient } from "@/lib/supabase";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { buildBook, buildTenets } from "@/lib/content/seed";
 
 async function main() {

@@ -1,6 +1,8 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { getBook } from "@/lib/data";
+import { getOutline } from "@/lib/data";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Read the gathering",
@@ -9,7 +11,7 @@ export const metadata: Metadata = {
 };
 
 export default async function ReadPage() {
-  const book = await getBook();
+  const book = await getOutline();
 
   return (
     <div className="mx-auto max-w-3xl px-5 py-14 sm:px-8">
@@ -48,8 +50,8 @@ export default async function ReadPage() {
                       </span>
                     </span>
                     <span className="ui shrink-0 text-xs text-ink-faint">
-                      {passage.renderings.length}{" "}
-                      {passage.renderings.length === 1 ? "rendering" : "renderings"}
+                      {passage.renderingCount}{" "}
+                      {passage.renderingCount === 1 ? "rendering" : "renderings"}
                     </span>
                   </Link>
                 </li>

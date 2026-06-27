@@ -67,3 +67,55 @@ export interface Movement {
   orderIndex: number;
   passages: Passage[];
 }
+
+// Lightweight shapes for the reader index and navigation (no rendering bodies).
+export interface PassageOutline {
+  slug: string;
+  movementSlug: string;
+  canonicalRef: string;
+  title: string;
+  renderingCount: number;
+}
+
+export interface MovementOutline {
+  slug: string;
+  title: string;
+  summary: string;
+  passages: PassageOutline[];
+}
+
+/** A tenet together with the renderings that read through it. */
+export interface TenetUsage {
+  passageSlug: string;
+  movementSlug: string;
+  passageTitle: string;
+  canonicalRef: string;
+  author: string;
+  isGathered: boolean;
+}
+
+export interface TenetDetail {
+  tenet: Tenet;
+  usages: TenetUsage[];
+}
+
+export interface NavRef {
+  movementSlug: string;
+  passageSlug: string;
+  title: string;
+}
+
+export interface PassageLocation {
+  movementSlug: string;
+  movementTitle: string;
+  passage: Passage;
+  previous: NavRef | null;
+  next: NavRef | null;
+}
+
+export interface BookStats {
+  movements: number;
+  passages: number;
+  renderings: number;
+  tenets: number;
+}
