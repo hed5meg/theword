@@ -2,11 +2,16 @@ import Link from "next/link";
 import { Prose } from "@/components/Prose";
 import { AddYourLight } from "@/components/AddYourLight";
 import { getMission, getStats } from "@/lib/data";
+import { getUser } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  const [mission, stats] = await Promise.all([getMission(), getStats()]);
+  const [mission, stats, user] = await Promise.all([
+    getMission(),
+    getStats(),
+    getUser(),
+  ]);
 
   return (
     <div>
@@ -30,9 +35,9 @@ export default async function HomePage() {
               href="/read"
               className="w-full rounded-full bg-ink px-7 py-3 text-center text-sm font-medium text-parchment transition-opacity hover:opacity-90 sm:w-auto"
             >
-              Read the gathering
+              Read Pollinations
             </Link>
-            <AddYourLight className="w-full text-sm sm:w-auto" />
+            {!user && <AddYourLight className="w-full text-sm sm:w-auto" />}
           </div>
           <p className="ui mt-8 text-xs tracking-wide text-ink-faint">
             {stats.movements} movements · {stats.passages} passages ·{" "}
