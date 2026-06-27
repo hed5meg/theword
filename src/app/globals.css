@@ -1,0 +1,134 @@
+@import "tailwindcss";
+
+/*
+  The Unsealed Revelation — a calm, luminous, reverent reading surface.
+  Warm parchment ground, deep ink text, a single soft-gold light.
+  Reading should feel like scripture, not an app.
+*/
+
+@theme inline {
+  /* Palette */
+  --color-parchment: #faf6ec;
+  --color-parchment-deep: #f3ecdb;
+  --color-card: #fffdf8;
+  --color-ink: #2a2419;
+  --color-ink-soft: #5c5444;
+  --color-ink-faint: #8a8170;
+  --color-line: #e7ddc7;
+  --color-gold: #9a7b34;
+  --color-gold-soft: #c9a85e;
+  --color-glow: #fbf1d6;
+
+  /* Semantic aliases used by Tailwind background and text utilities */
+  --color-background: var(--color-parchment);
+  --color-foreground: var(--color-ink);
+
+  /* Type */
+  --font-serif: var(--font-eb-garamond), Georgia, "Times New Roman", serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+
+  /* Reading measure */
+  --measure: 38rem;
+}
+
+* {
+  border-color: var(--color-line);
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  background-color: var(--color-parchment);
+  color: var(--color-ink);
+  font-family: var(--font-serif);
+  font-size: 1.0625rem;
+  line-height: 1.75;
+}
+
+::selection {
+  background: var(--color-glow);
+  color: var(--color-ink);
+}
+
+/* Visible, gentle focus for keyboard users (WCAG). */
+:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* A soft label voice for the app chrome — quiet, never shouting. */
+.eyebrow {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-ink-faint);
+}
+
+.ui {
+  font-family: var(--font-sans);
+}
+
+/*
+  Reverent prose — the body of a rendering or the traditional text.
+  Generous whitespace, large serif, calm rhythm.
+*/
+.prose-reverent {
+  font-family: var(--font-serif);
+  color: var(--color-ink);
+  font-size: 1.2rem;
+  line-height: 1.85;
+  max-width: var(--measure);
+}
+.prose-reverent p {
+  margin-block: 1.15em;
+}
+.prose-reverent p:first-child {
+  margin-top: 0;
+}
+.prose-reverent em {
+  font-style: italic;
+  color: var(--color-ink);
+}
+.prose-reverent strong {
+  font-weight: 600;
+}
+.prose-reverent a {
+  color: var(--color-gold);
+  text-underline-offset: 3px;
+}
+
+/* A larger, airier setting for the promoted Gathered Rendering. */
+.prose-gathered {
+  font-size: 1.34rem;
+  line-height: 1.92;
+}
+
+/* The grounding traditional text — quieter, set apart. */
+.prose-traditional {
+  font-style: italic;
+  color: var(--color-ink-soft);
+  font-size: 1.08rem;
+  line-height: 1.8;
+}
+
+@media (max-width: 640px) {
+  .prose-gathered {
+    font-size: 1.2rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
