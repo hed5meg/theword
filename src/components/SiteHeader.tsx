@@ -22,7 +22,7 @@ export async function SiteHeader() {
             strokeWidth="1.5"
           >
             <circle cx="12" cy="12" r="10" />
-            <rect x="8" y="8" width="8" height="8" />
+            <rect x="5" y="5" width="14" height="14" />
           </svg>
           <span className="font-serif text-lg tracking-tight text-ink">
             The Word Revealed
