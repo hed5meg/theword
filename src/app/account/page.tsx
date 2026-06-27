@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getProfile } from "@/lib/auth";
@@ -114,6 +115,23 @@ export default async function AccountPage({
           </p>
           <ThemeToggle />
         </div>
+      </section>
+
+      <section className="ui mt-10 flex items-center justify-between gap-4 border-t border-line/70 pt-8">
+        <Link
+          href={`/members/${profile.handle}`}
+          className="text-sm text-gold transition-colors hover:text-ink"
+        >
+          View your public page →
+        </Link>
+        <form action="/auth/signout" method="post">
+          <button
+            type="submit"
+            className="rounded-full border border-line px-5 py-2 text-sm text-ink-soft transition-colors hover:border-gold-soft/50 hover:text-ink"
+          >
+            Sign out
+          </button>
+        </form>
       </section>
     </div>
   );

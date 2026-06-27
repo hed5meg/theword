@@ -64,19 +64,11 @@ export async function SiteHeader() {
                 Refinements{refinementCount > 0 ? ` (${refinementCount})` : ""}
               </Link>
               <Link
-                href={`/members/${profile.handle}`}
+                href="/account"
                 className="text-ink-soft transition-colors hover:text-ink"
               >
                 {profile.displayName}
               </Link>
-              <form action="/auth/signout" method="post">
-                <button
-                  type="submit"
-                  className="text-ink-faint transition-colors hover:text-ink-soft"
-                >
-                  Sign out
-                </button>
-              </form>
             </>
           ) : (
             <Link

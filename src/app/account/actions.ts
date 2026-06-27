@@ -38,12 +38,22 @@ export async function updateProfile(formData: FormData) {
       bio: bio || null,
       traditions: toList(formData.get("traditions")),
       languages: toList(formData.get("languages")),
-      email_notifications: formData.get("email_notifications") === "on",
     })
     .eq("id", user.id);
 
   if (error) {
     redirect(`/account?error=${error.code === "23505" ? "handle" : "save"}`);
+  }
+
+  // Email preference is best-effort: the column only exists after migration 0005,
+  // so a failure here must never block saving the rest of the profile.
+  try {
+    await sb
+      .from("profiles")
+      .update({ email_notifications: formData.get("email_notifications") === "on" })
+      .eq("id", user.id);
+  } catch {
+    /* email_notifications column not present yet */
   }
 
   revalidatePath("/", "layout");
