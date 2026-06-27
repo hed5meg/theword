@@ -13,6 +13,7 @@ import { getReflections } from "@/lib/data/reflections";
 import { getGatheredHistory } from "@/lib/data/gathering";
 import { getNotesByRendering } from "@/lib/data/notes";
 import { RenderingArticle } from "@/components/RenderingArticle";
+import { RenderingPicker } from "@/components/RenderingPicker";
 import { Reflections } from "@/components/Reflections";
 import { PassageNav } from "@/components/PassageNav";
 import { ArrangementSelector } from "@/components/ArrangementSelector";
@@ -46,10 +47,10 @@ export default async function PassagePage({
   searchParams,
 }: {
   params: Promise<Params>;
-  searchParams: Promise<{ compare?: string }>;
+  searchParams: Promise<{ compare?: string; rendering?: string }>;
 }) {
   const { arrangement, passage } = await params;
-  const { compare } = await searchParams;
+  const { compare, rendering: renderingParam } = await searchParams;
   const found = await getArrangementPassage(arrangement, passage);
   if (!found) notFound();
 
@@ -65,6 +66,21 @@ export default async function PassagePage({
   const gathered = p.gatheredRendering;
   const alternatives = p.renderings.filter((r) => !r.isGathered);
   const communityRenderings = alternatives.filter((r) => r.authorHandle);
+
+  // Pick which rendering to read (default the gathered one). One at a time.
+  const renderingOptions = p.renderings.map((r) => ({
+    key: r.isGathered ? "gathered" : (r.id ?? ""),
+    label: r.isGathered ? `Gathered — ${r.author}` : r.author,
+  }));
+  const selectedKey =
+    typeof renderingParam === "string" &&
+    renderingOptions.some((o) => o.key === renderingParam)
+      ? renderingParam
+      : "gathered";
+  const selected =
+    selectedKey === "gathered"
+      ? gathered
+      : (p.renderings.find((r) => r.id === selectedKey) ?? gathered);
 
   const path = `/read/${arrangement}/${passage}`;
   const renderingIds = p.renderings
@@ -203,76 +219,62 @@ export default async function PassagePage({
         </details>
       )}
 
-      {/* Gathered Rendering */}
-      {gathered ? (
-        <section className="mt-12">
+      {/* Choose a rendering (one at a time; side-by-side lives in Compare) */}
+      {renderingOptions.length > 1 && (
+        <div className="mt-8 flex flex-wrap items-center justify-between gap-3">
+          <RenderingPicker
+            options={renderingOptions}
+            current={selectedKey}
+            basePath={path}
+          />
+          <span className="ui text-xs text-ink-faint">
+            {renderingOptions.length} renderings · never ranked
+          </span>
+        </div>
+      )}
+
+      {selected ? (
+        <section className="mt-6">
           <RenderingArticle
-            rendering={gathered}
-            variant="gathered"
+            rendering={selected}
+            variant={selected.isGathered ? "gathered" : "alternative"}
+            primary
             signedIn={signedIn}
-            resonated={gathered.id ? resonated.has(gathered.id) : false}
+            resonated={selected.id ? resonated.has(selected.id) : false}
             path={path}
             showTenetInfo
-            notes={gathered.id ? notesByRendering.get(gathered.id) : undefined}
-            canManageNotes={canManageNotes(gathered)}
+            notes={selected.id ? notesByRendering.get(selected.id) : undefined}
+            canManageNotes={canManageNotes(selected)}
             allTenets={allTenets}
           />
         </section>
       ) : (
-        <p className="mt-12 text-ink-soft">
-          No gathered rendering yet for this passage.
+        <p className="mt-12 text-ink-soft">No rendering yet for this passage.</p>
+      )}
+
+      {selected?.isGathered && <GatheredHistory events={history} />}
+
+      {communityRenderings.length === 0 && (
+        <p className="ui mt-8 rounded-2xl border border-dashed border-gold-soft/50 bg-glow/30 p-5 text-ink-soft">
+          No community renderings yet — yours can be the first to sit beside this
+          telling.
         </p>
       )}
 
-      <GatheredHistory events={history} />
-
-      {/* Renderings side by side */}
-      <section className="mt-16">
-        <h2 className="font-serif text-2xl text-ink">Renderings held side by side</h2>
-        <p className="mt-1.5 text-ink-soft">
-          Other tellings of this passage, offered in love — never ranked, never in
-          competition.
+      <div className="ui mt-8 rounded-2xl border border-gold-soft/40 bg-glow/40 p-6 text-center">
+        <p className="font-serif text-lg text-ink">
+          Do you read this passage differently?
         </p>
-
-        {communityRenderings.length === 0 && (
-          <p className="mt-6 rounded-2xl border border-dashed border-gold-soft/50 bg-glow/30 p-5 text-ink-soft">
-            No community renderings yet — yours can be the first to sit beside these
-            seed tellings.
-          </p>
-        )}
-
-        {alternatives.length > 0 && (
-          <div className="mt-8 space-y-8">
-            {alternatives.map((r) => (
-              <RenderingArticle
-                key={r.id}
-                rendering={r}
-                signedIn={signedIn}
-                resonated={r.id ? resonated.has(r.id) : false}
-                path={path}
-                notes={r.id ? notesByRendering.get(r.id) : undefined}
-                canManageNotes={canManageNotes(r)}
-                allTenets={allTenets}
-              />
-            ))}
-          </div>
-        )}
-
-        <div className="ui mt-8 rounded-2xl border border-gold-soft/40 bg-glow/40 p-6 text-center">
-          <p className="font-serif text-lg text-ink">
-            Do you read this passage differently?
-          </p>
-          <p className="mt-1 text-sm text-ink-soft">
-            Offer your own plain, pure rendering — it will sit beside the others.
-          </p>
-          <Link
-            href={offerHref}
-            className="mt-4 inline-block rounded-full border border-gold-soft/60 px-6 py-2.5 text-sm font-medium text-gold transition-colors hover:bg-glow"
-          >
-            Offer a rendering
-          </Link>
-        </div>
-      </section>
+        <p className="mt-1 text-sm text-ink-soft">
+          Offer your own plain, pure rendering — it joins the others in the list above.
+        </p>
+        <Link
+          href={offerHref}
+          className="mt-4 inline-block rounded-full border border-gold-soft/60 px-6 py-2.5 text-sm font-medium text-gold transition-colors hover:bg-glow"
+        >
+          Offer a rendering
+        </Link>
+      </div>
         </>
       )}
 

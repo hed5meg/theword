@@ -13,6 +13,7 @@ import { FlagControl } from "@/components/FlagControl";
 export function RenderingArticle({
   rendering,
   variant = "alternative",
+  primary = false,
   signedIn = false,
   resonated = false,
   path = "/",
@@ -23,6 +24,8 @@ export function RenderingArticle({
 }: {
   rendering: Rendering;
   variant?: "gathered" | "alternative";
+  /** Render large and uncarded as the page's main reading (regardless of badge). */
+  primary?: boolean;
   signedIn?: boolean;
   resonated?: boolean;
   path?: string;
@@ -32,6 +35,7 @@ export function RenderingArticle({
   allTenets?: { slug: string; title: string }[];
 }) {
   const isGathered = variant === "gathered";
+  const big = isGathered || primary;
   // Seed renderings are the project's own two tellings (no author profile).
   const isSeed = !rendering.authorHandle;
   const seedDescriptor = isSeed
@@ -41,7 +45,7 @@ export function RenderingArticle({
     : null;
 
   return (
-    <article className={isGathered ? "" : "rounded-2xl border border-line bg-card/50 p-6 sm:p-8"}>
+    <article className={big ? "" : "rounded-2xl border border-line bg-card/50 p-6 sm:p-8"}>
       <header className="ui mb-5 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-ink-faint">
         {isGathered && (
           <span className="rounded-full bg-glow px-3 py-1 text-xs font-medium tracking-wide text-gold">
@@ -87,11 +91,11 @@ export function RenderingArticle({
           path={path}
           canCreate={signedIn}
           canManage={canManageNotes}
-          proseClass={isGathered ? "prose-gathered" : ""}
+          proseClass={big ? "prose-gathered" : ""}
           allTenets={allTenets}
         />
       ) : (
-        <Prose className={isGathered ? "prose-gathered" : ""}>
+        <Prose className={big ? "prose-gathered" : ""}>
           {rendering.body}
         </Prose>
       )}
