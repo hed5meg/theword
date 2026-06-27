@@ -28,7 +28,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "The Unsealed Revelation",
     description:
-      "Gathering the book of Revelation into one place, filtering every word through love. Nothing is final; come and add your light.",
+      "The Word Revealed by gathering Israel and sharing our gifts. Nothing is final; come and add your light.",
     url: "https://theword.love",
     siteName: "The Unsealed Revelation",
     type: "website",

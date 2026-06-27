@@ -27,8 +27,8 @@ export default async function HomePage() {
             The Unsealed Revelation
           </h1>
           <p className="mx-auto mt-6 max-w-xl font-serif text-xl italic leading-relaxed text-ink-soft sm:text-2xl">
-            Gathering the book of Revelation into one place — filtering every word
-            through love. Read it the way you would read a letter from home.
+            The Word Revealed by gathering Israel and sharing our gifts. Read it
+            the way you would read a letter from home.
           </p>
           <div className="ui mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
