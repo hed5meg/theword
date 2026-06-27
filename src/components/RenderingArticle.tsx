@@ -1,6 +1,8 @@
+import Link from "next/link";
 import type { Rendering } from "@/lib/types";
 import { Prose } from "@/components/Prose";
 import { TenetList } from "@/components/TenetList";
+import { ResonanceControl } from "@/components/ResonanceControl";
 
 /**
  * One rendering of a passage. The gathered rendering is set larger and airier;
@@ -9,9 +11,15 @@ import { TenetList } from "@/components/TenetList";
 export function RenderingArticle({
   rendering,
   variant = "alternative",
+  signedIn = false,
+  resonated = false,
+  path = "/",
 }: {
   rendering: Rendering;
   variant?: "gathered" | "alternative";
+  signedIn?: boolean;
+  resonated?: boolean;
+  path?: string;
 }) {
   const isGathered = variant === "gathered";
 
@@ -23,7 +31,16 @@ export function RenderingArticle({
             Gathered Rendering
           </span>
         )}
-        <span className="text-ink-soft">{rendering.author}</span>
+        {rendering.authorHandle ? (
+          <Link
+            href={`/members/${rendering.authorHandle}`}
+            className="text-ink-soft transition-colors hover:text-ink"
+          >
+            {rendering.author}
+          </Link>
+        ) : (
+          <span className="text-ink-soft">{rendering.author}</span>
+        )}
         <span aria-hidden>·</span>
         <span>{rendering.language}</span>
         {rendering.tradition && (
@@ -40,21 +57,18 @@ export function RenderingArticle({
 
       <footer className="mt-6 flex flex-col gap-4 border-t border-line/70 pt-4">
         <TenetList tenets={rendering.tenets} />
-        <ResonanceTally count={rendering.resonanceCount} />
+        {rendering.id && (
+          <ResonanceControl
+            targetType="rendering"
+            targetId={rendering.id}
+            count={rendering.resonanceCount}
+            active={resonated}
+            signedIn={signedIn}
+            path={path}
+            noun="this rendering"
+          />
+        )}
       </footer>
     </article>
-  );
-}
-
-function ResonanceTally({ count }: { count: number }) {
-  return (
-    <p className="ui flex items-center gap-1.5 text-xs text-ink-faint">
-      <span aria-hidden className="text-gold-soft">
-        ✦
-      </span>
-      {count > 0
-        ? `${count} ${count === 1 ? "person resonates" : "people resonate"} with this`
-        : "Resonance opens with accounts soon — this rendering is waiting for the first light"}
-    </p>
   );
 }

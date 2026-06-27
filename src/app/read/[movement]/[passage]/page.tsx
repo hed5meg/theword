@@ -2,7 +2,11 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getPassage } from "@/lib/data";
+import { getUser } from "@/lib/auth";
+import { getMyResonatedIds } from "@/lib/resonance";
+import { getReflections } from "@/lib/data/reflections";
 import { RenderingArticle } from "@/components/RenderingArticle";
+import { Reflections } from "@/components/Reflections";
 
 export const dynamic = "force-dynamic";
 
@@ -34,6 +38,17 @@ export default async function PassagePage({
   const { passage: p, movementTitle, previous, next } = found;
   const gathered = p.gatheredRendering;
   const alternatives = p.renderings.filter((r) => !r.isGathered);
+
+  const path = `/read/${movement}/${passage}`;
+  const [user, resonated, reflections] = await Promise.all([
+    getUser(),
+    getMyResonatedIds(
+      "rendering",
+      p.renderings.map((r) => r.id).filter((id): id is string => Boolean(id)),
+    ),
+    p.id ? getReflections("passage", p.id) : Promise.resolve([]),
+  ]);
+  const signedIn = Boolean(user);
 
   return (
     <div className="mx-auto max-w-3xl px-5 py-12 sm:px-8">
@@ -74,7 +89,13 @@ export default async function PassagePage({
       {/* The Gathered Rendering */}
       {gathered ? (
         <section className="mt-12">
-          <RenderingArticle rendering={gathered} variant="gathered" />
+          <RenderingArticle
+            rendering={gathered}
+            variant="gathered"
+            signedIn={signedIn}
+            resonated={gathered.id ? resonated.has(gathered.id) : false}
+            path={path}
+          />
         </section>
       ) : (
         <p className="mt-12 text-ink-soft">
@@ -97,7 +118,13 @@ export default async function PassagePage({
         {alternatives.length > 0 ? (
           <div className="mt-8 space-y-8">
             {alternatives.map((r) => (
-              <RenderingArticle key={r.id} rendering={r} />
+              <RenderingArticle
+                key={r.id}
+                rendering={r}
+                signedIn={signedIn}
+                resonated={r.id ? resonated.has(r.id) : false}
+                path={path}
+              />
             ))}
           </div>
         ) : (
@@ -111,14 +138,27 @@ export default async function PassagePage({
             Do you read this passage differently?
           </p>
           <p className="mt-1 text-sm text-ink-soft">
-            Offering your own rendering opens with accounts in the next step of the
-            work.
+            Offer your own plain, pure rendering — it will sit beside the others.
           </p>
-          <span className="mt-4 inline-block cursor-not-allowed rounded-full border border-gold-soft/60 px-6 py-2.5 text-sm font-medium text-gold/70">
-            Offer a rendering · coming soon
-          </span>
+          <Link
+            href={`/render/${p.slug}`}
+            className="mt-4 inline-block rounded-full border border-gold-soft/60 px-6 py-2.5 text-sm font-medium text-gold transition-colors hover:bg-glow"
+          >
+            Offer a rendering
+          </Link>
         </div>
       </section>
+
+      {/* Reflections */}
+      {p.id && (
+        <Reflections
+          targetType="passage"
+          targetId={p.id}
+          path={path}
+          signedIn={signedIn}
+          reflections={reflections}
+        />
+      )}
 
       {/* Gentle next / previous */}
       <nav className="ui mt-16 flex items-stretch justify-between gap-4 border-t border-line/70 pt-8 text-sm">

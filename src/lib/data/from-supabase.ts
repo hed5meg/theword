@@ -156,6 +156,7 @@ export async function getPassage(
   if (!p) return null;
 
   type PassageRow = {
+    id: string;
     slug: string;
     canonical_ref: string;
     title: string;
@@ -178,6 +179,7 @@ export async function getPassage(
     .sort((a, b) => Number(b.isGathered) - Number(a.isGathered));
 
   const passage = {
+    id: passageRow.id,
     slug: passageRow.slug,
     movementSlug,
     canonicalRef: passageRow.canonical_ref,
@@ -278,7 +280,7 @@ export async function getTenet(slug: string): Promise<TenetDetail | null> {
     };
   });
 
-  return { tenet: mapTenet(tenetRow, count), usages };
+  return { tenet: { ...mapTenet(tenetRow, count), id: tenetRow.id }, usages };
 }
 
 export async function getStats(): Promise<BookStats> {

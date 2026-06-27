@@ -4,6 +4,16 @@
 
 export type Role = "member" | "steward" | "admin";
 
+export interface Profile {
+  id: string;
+  handle: string;
+  displayName: string;
+  bio?: string;
+  traditions: string[];
+  languages: string[];
+  role: Role;
+}
+
 export type RenderingStatus = "draft" | "submitted" | "gathered" | "archived";
 
 export type ResonanceTarget = "rendering" | "tenet" | "reflection";
