@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getProfile } from "@/lib/auth";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export async function SiteHeader() {
   const profile = await getProfile();
@@ -61,6 +62,7 @@ export async function SiteHeader() {
               Add your light
             </Link>
           )}
+          <ThemeToggle />
         </nav>
       </div>
     </header>

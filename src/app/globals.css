@@ -1,27 +1,62 @@
 @import "tailwindcss";
 
+/* Enable class-based dark mode (.dark on <html>) for any dark: utilities. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 /*
   The Unsealed Revelation — a calm, luminous, reverent reading surface.
   Warm parchment ground, deep ink text, a single soft-gold light.
   Reading should feel like scripture, not an app.
+
+  Palette is theme-aware: raw values live in :root (light) and .dark, and the
+  Tailwind color tokens below reference them, so every background and text
+  utility swaps together. Contrast is WCAG-verified (see docs/contrast-and-dark-mode).
 */
 
+:root {
+  --paper: #faf8f4;
+  --paper-deep: #f1ebdf;
+  --card: #ffffff;
+  --ink: #2b2a28; /* 13.5:1 on paper — AAA */
+  --ink-soft: #5c574e; /* 6.8:1 — AA */
+  --ink-faint: #6e685c; /* 5.2:1 — AA (was too light) */
+  --line: #e0d9cc;
+  --gold: #8a6d2c;
+  --gold-soft: #b08a3e;
+  --glow: #faf1d8;
+  color-scheme: light;
+}
+
+.dark {
+  --paper: #17150f; /* warm near-black, not pure black */
+  --paper-deep: #1f1b14;
+  --card: #211e18;
+  --ink: #ece7de; /* 14.8:1 on bg — AAA */
+  --ink-soft: #c9c2b5; /* 10.3:1 — AAA */
+  --ink-faint: #a39c8e; /* 6.7:1 — AA */
+  --line: #332e26;
+  --gold: #e8b04b;
+  --gold-soft: #e8b04b; /* amber, 9.3:1 — AAA */
+  --glow: #2a251d;
+  color-scheme: dark;
+}
+
 @theme inline {
-  /* Palette */
-  --color-parchment: #faf6ec;
-  --color-parchment-deep: #f3ecdb;
-  --color-card: #fffdf8;
-  --color-ink: #2a2419;
-  --color-ink-soft: #5c5444;
-  --color-ink-faint: #8a8170;
-  --color-line: #e7ddc7;
-  --color-gold: #9a7b34;
-  --color-gold-soft: #c9a85e;
-  --color-glow: #fbf1d6;
+  /* Theme-aware color tokens (resolve to the runtime vars above) */
+  --color-parchment: var(--paper);
+  --color-parchment-deep: var(--paper-deep);
+  --color-card: var(--card);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-faint: var(--ink-faint);
+  --color-line: var(--line);
+  --color-gold: var(--gold);
+  --color-gold-soft: var(--gold-soft);
+  --color-glow: var(--glow);
 
   /* Semantic aliases used by Tailwind background and text utilities */
-  --color-background: var(--color-parchment);
-  --color-foreground: var(--color-ink);
+  --color-background: var(--paper);
+  --color-foreground: var(--ink);
 
   /* Type */
   --font-serif: var(--font-eb-garamond), Georgia, "Times New Roman", serif;

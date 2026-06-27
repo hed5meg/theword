@@ -1,67 +1,146 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Community guidelines",
+  title: "How We Gather",
   description:
-    "How we hold this work and one another — rooted in the two great commandments.",
+    "The community guidelines for The Unsealed Revelation — rooted in the two great commandments.",
 };
-
-const GUIDELINES = [
-  {
-    title: "Contribute in love",
-    body: "Everything here is tested against the two great commandments — to love God, and to love one another as ourselves. Offer your renderings, principles, and reflections in that spirit.",
-  },
-  {
-    title: "Assume good faith",
-    body: "We come from many traditions and tongues. Read one another generously. A difference is a gift to be gathered, not a fight to be won.",
-  },
-  {
-    title: "The enemy is never a people",
-    body: "We refuse any content that targets, dehumanizes, or excludes any people, group, tradition, race, or nation. The accuser is a spirit of fear — never a people. No finger-pointing.",
-  },
-  {
-    title: "No harassment, no harm",
-    body: "No harassment, doxxing, or incitement. No sexual content involving minors or any material that promotes harm. These are removed without exception.",
-  },
-  {
-    title: "Keep it plain, pure, and precious",
-    body: "Favor clarity and warmth over cleverness. Write so a newcomer with desire and no training can be moved and can take part.",
-  },
-  {
-    title: "Hold opinions gently — nothing is final",
-    body: "No rendering is the last word. Every offering is held gently, weighed against love, and passed to the next set of hands. If something seems off, flag it for a steward rather than fighting over it.",
-  },
-];
 
 export default function GuidelinesPage() {
   return (
     <div className="mx-auto max-w-2xl px-5 py-14 sm:px-8">
       <header className="text-center">
-        <p className="eyebrow">How we hold this work</p>
+        <p className="eyebrow">The community guidelines</p>
         <h1 className="mt-4 font-serif text-4xl tracking-tight text-ink sm:text-5xl">
-          Community guidelines
+          How We Gather
         </h1>
-        <p className="mx-auto mt-4 max-w-lg font-serif text-lg italic text-ink-soft">
-          On these two commandments hang all the law and the prophets: love God,
-          and love your neighbor as yourself. Everything below simply follows from
-          that.
-        </p>
       </header>
 
-      <div className="mt-12 space-y-8">
-        {GUIDELINES.map((g) => (
-          <section key={g.title}>
-            <h2 className="font-serif text-xl text-ink">{g.title}</h2>
-            <p className="mt-1.5 leading-relaxed text-ink-soft">{g.body}</p>
-          </section>
-        ))}
-      </div>
+      <div className="mt-12 space-y-10">
+        <p className="font-serif text-lg leading-relaxed text-ink-soft">
+          This is an open table. Anyone who wishes to help gather the Word into its
+          plain, pure form is welcome here — from any tradition, in any tongue, at
+          any point on the road home. To keep the table safe and the work joyful, we
+          ask only a few things of one another. They all come from the same place.
+        </p>
 
-      <p className="ui mt-12 rounded-2xl border border-line bg-card/50 p-6 text-sm text-ink-soft">
-        See something that doesn&rsquo;t belong? Use the gentle <strong>Flag</strong>{" "}
-        link on any rendering, principle, or reflection, and a steward will tend to it.
-        Stewards may hide an item pending review, archive it, or restore it.
-      </p>
+        <Section title="The ground we stand on">
+          <p>
+            Everything here rests on the two great commandments: to love God, and to
+            love one another as ourselves. That is the filter we read the text
+            through — and it is just as much how we treat each other. If love of God
+            and neighbor is the measure of a true rendering, it is the measure of a
+            true contributor, too.
+          </p>
+        </Section>
+
+        <Section title="How we gather">
+          <Line head="Hold every offering gently.">
+            Each rendering, principle, arrangement, and note is someone&rsquo;s
+            sincere attempt to see more clearly. Receive it the way you would want
+            yours received.
+          </Line>
+          <Line head="Gather, don't compete.">
+            We are not here to win an argument or to rank one another. We lay our
+            pieces down side by side and let the Word grow clearer than any of us
+            could make it alone.
+          </Line>
+          <Line head="Assume good faith.">
+            When something lands wrong, assume the best first. Ask before you accuse.
+            We each carry a different culture, language, and set of wounds, and much
+            is lost in the space between us.
+          </Line>
+          <Line head="Disagree in love.">
+            You are free — encouraged — to question, to correct, to refine. Do it
+            kindly, and about the text, never against the person.
+          </Line>
+          <Line head="Hold your own view gently.">
+            Nothing here is final. Come willing to be changed; that is how the
+            gathering works.
+          </Line>
+        </Section>
+
+        <Section title="The few firm lines">
+          <p className="text-ink-soft">
+            These are few, and we hold them firmly, because they keep the table safe
+            for everyone.
+          </p>
+          <Line head="The enemy is never a people.">
+            We never aim the text — or each other — at any person, people, race,
+            religion, or nation. The accuser this book unmasks is fear itself, never
+            a group of God&rsquo;s children. Anything that dehumanizes, targets, or
+            excludes a people has no place here.
+          </Line>
+          <Line head="No harassment.">
+            No attacking, demeaning, exposing, or pursuing another person. The notes
+            and reflections are for the work, never for wounding.
+          </Line>
+          <Line head="Protect the children.">
+            Anything that sexualizes or endangers a child is forbidden, will be
+            removed at once, and will be reported where the law requires.
+          </Line>
+          <Line head="Nothing that promotes harm">
+            — violence, self-harm, exploitation, or hatred — belongs here.
+          </Line>
+          <p className="text-ink-soft">Everything else, we work out together, in love.</p>
+        </Section>
+
+        <Section title="How the work is tended">
+          <Line head="Stewards are gardeners, not gatekeepers.">
+            They are members who tend the gathering — helping to gather what the
+            community is converging on, and keeping the table safe. They serve the
+            work; they do not own it.
+          </Line>
+          <Line head="If something breaks the table's peace, you can flag it,">
+            and a steward will look with care.
+          </Line>
+          <Line head="We hold rather than punish.">
+            Most things here are held gently — set aside, revisited, refined — not
+            deleted in anger. The firm lines above are the exception: those we
+            enforce, so that everyone stays safe.
+          </Line>
+          <Line head="Nothing true is thrown away for being unfamiliar.">
+            Wisdom from every culture and tongue belongs at this table. Difference is
+            not a violation; it is part of what we gather.
+          </Line>
+        </Section>
+
+        <Section title="What we gather, we give away">
+          <p>
+            Everything offered here is shared freely, so that the Word stays free for
+            the whole family. Bring what is yours to bring, knowing it becomes a gift
+            to everyone who comes after.
+          </p>
+        </Section>
+
+        <div className="border-t border-line/70 pt-8 text-center">
+          <p className="font-serif text-lg italic leading-relaxed text-ink-soft">
+            If your heart turns toward this work, you are already one of us. Come and
+            add your light — and help us keep the table a place where love and truth
+            can come through.
+          </p>
+          <p className="ui mt-4 text-sm text-ink-faint">
+            Nothing is final. The gathering is the work.
+          </p>
+        </div>
+      </div>
     </div>
+  );
+}
+
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <section className="space-y-3">
+      <h2 className="font-serif text-2xl text-ink">{title}</h2>
+      {children}
+    </section>
+  );
+}
+
+function Line({ head, children }: { head: string; children: React.ReactNode }) {
+  return (
+    <p className="leading-relaxed text-ink-soft">
+      <strong className="font-semibold text-ink">{head}</strong> {children}
+    </p>
   );
 }
