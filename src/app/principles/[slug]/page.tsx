@@ -44,8 +44,8 @@ export default async function TenetPage({
   return (
     <div className="mx-auto max-w-2xl px-5 py-14 sm:px-8">
       <nav className="ui mb-8 flex items-center gap-2 text-sm text-ink-faint">
-        <Link href="/tenets" className="transition-colors hover:text-ink-soft">
-          The Tenets
+        <Link href="/principles" className="transition-colors hover:text-ink-soft">
+          The Principles
         </Link>
         {tenet.group && (
           <>
@@ -67,13 +67,13 @@ export default async function TenetPage({
               count={tenet.resonanceCount}
               active={resonated.has(tenet.id)}
               signedIn={Boolean(user)}
-              path={`/tenets/${slug}`}
-              noun="this tenet"
+              path={`/principles/${slug}`}
+              noun="this principle"
             />
             <FlagControl
               targetType="tenet"
               targetId={tenet.id}
-              path={`/tenets/${slug}`}
+              path={`/principles/${slug}`}
               signedIn={Boolean(user)}
             />
           </div>
@@ -118,7 +118,7 @@ export default async function TenetPage({
           </ul>
         ) : (
           <p className="mt-5 rounded-2xl border border-dashed border-line bg-card/40 p-6 text-ink-soft">
-            No renderings cite this tenet yet.
+            No renderings cite this principle yet.
           </p>
         )}
       </section>
@@ -127,7 +127,7 @@ export default async function TenetPage({
         <Reflections
           targetType="tenet"
           targetId={tenet.id}
-          path={`/tenets/${slug}`}
+          path={`/principles/${slug}`}
           signedIn={Boolean(user)}
           reflections={reflections}
         />

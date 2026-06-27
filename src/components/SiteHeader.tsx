@@ -19,8 +19,8 @@ export async function SiteHeader() {
           <Link href="/read" className="text-ink-soft transition-colors hover:text-ink">
             Read
           </Link>
-          <Link href="/tenets" className="text-ink-soft transition-colors hover:text-ink">
-            Tenets
+          <Link href="/principles" className="text-ink-soft transition-colors hover:text-ink">
+            Principles
           </Link>
           {profile ? (
             <>
@@ -49,7 +49,7 @@ export async function SiteHeader() {
             </>
           ) : (
             <Link
-              href="/signin"
+              href="/signin?next=/read"
               className="rounded-full border border-gold-soft/60 px-3.5 py-1.5 text-gold transition-colors hover:bg-glow"
             >
               Add your light

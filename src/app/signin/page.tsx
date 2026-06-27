@@ -25,7 +25,7 @@ export default async function SignInPage({
           Add your light
         </h1>
         <p className="mt-3 text-ink-soft">
-          Sign in to offer a rendering, share the tenets you read by, and let others
+          Sign in to offer a rendering, share the principles you read by, and let others
           know what resonates. Reading is always open to everyone.
         </p>
       </header>

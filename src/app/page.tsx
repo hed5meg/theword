@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Prose } from "@/components/Prose";
+import { AddYourLight } from "@/components/AddYourLight";
 import { getMission, getStats } from "@/lib/data";
 
 export const dynamic = "force-dynamic";
@@ -31,17 +32,11 @@ export default async function HomePage() {
             >
               Read the gathering
             </Link>
-            <Link
-              href="/read"
-              className="w-full rounded-full border border-gold-soft/60 px-7 py-3 text-center text-sm font-medium text-gold transition-colors hover:bg-glow sm:w-auto"
-            >
-              Add your light
-            </Link>
+            <AddYourLight className="w-full rounded-full border border-gold-soft/60 px-7 py-3 text-center text-sm font-medium text-gold transition-colors hover:bg-glow sm:w-auto" />
           </div>
           <p className="ui mt-8 text-xs tracking-wide text-ink-faint">
             {stats.movements} movements · {stats.passages} passages ·{" "}
-            {stats.renderings} renderings held side by side · {stats.tenets} founding
-            tenets
+            {stats.tenets} founding principles
           </p>
         </div>
       </section>
@@ -93,7 +88,7 @@ const PRINCIPLES = [
   },
   {
     title: "Filtered through love",
-    body: "Each rendering names the tenets it read by — principles tested against the two great commandments, refined by many hands.",
+    body: "Each rendering names the principles it read by — lenses tested against the two great commandments, refined by many hands.",
   },
   {
     title: "Nothing is final",

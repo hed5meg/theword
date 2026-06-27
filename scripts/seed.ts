@@ -115,13 +115,9 @@ async function main() {
       }
 
       if (gatheredId) {
+        // Set the initial Gathered Rendering, but do NOT write a history entry:
+        // gathering history should only record real, post-seed steward activity.
         await db.from("passages").update({ current_rendering_id: gatheredId }).eq("id", pId);
-        const { error: histErr } = await db.from("gathered_history").insert({
-          passage_id: pId,
-          rendering_id: gatheredId,
-          note: "Seeded as the initial Gathered Rendering — gently revisable.",
-        });
-        if (histErr) throw histErr;
       }
     }
   }

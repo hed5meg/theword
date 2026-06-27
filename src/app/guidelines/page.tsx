@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 const GUIDELINES = [
   {
     title: "Contribute in love",
-    body: "Everything here is tested against the two great commandments — to love God, and to love one another as ourselves. Offer your renderings, tenets, and reflections in that spirit.",
+    body: "Everything here is tested against the two great commandments — to love God, and to love one another as ourselves. Offer your renderings, principles, and reflections in that spirit.",
   },
   {
     title: "Assume good faith",
@@ -59,7 +59,7 @@ export default function GuidelinesPage() {
 
       <p className="ui mt-12 rounded-2xl border border-line bg-card/50 p-6 text-sm text-ink-soft">
         See something that doesn&rsquo;t belong? Use the gentle <strong>Flag</strong>{" "}
-        link on any rendering, tenet, or reflection, and a steward will tend to it.
+        link on any rendering, principle, or reflection, and a steward will tend to it.
         Stewards may hide an item pending review, archive it, or restore it.
       </p>
     </div>

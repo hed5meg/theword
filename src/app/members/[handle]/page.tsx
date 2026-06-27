@@ -16,7 +16,7 @@ export async function generateMetadata({
   if (!profile) return {};
   return {
     title: profile.displayName,
-    description: `${profile.displayName}'s renderings and the tenets they read by.`,
+    description: `${profile.displayName}'s renderings and the principles they read by.`,
   };
 }
 

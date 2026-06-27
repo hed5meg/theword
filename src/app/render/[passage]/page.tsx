@@ -111,7 +111,8 @@ export default async function RenderPage({
 
         <fieldset>
           <legend className="block text-sm text-ink-soft">
-            The tenets you read through <span className="text-ink-faint">(optional)</span>
+            The principles you read through{" "}
+            <span className="text-ink-faint">(optional)</span>
           </legend>
           <div className="mt-3 grid max-h-72 grid-cols-1 gap-2 overflow-y-auto rounded-xl border border-line bg-card/50 p-4 sm:grid-cols-2">
             {tenets.map((t) => (
@@ -127,8 +128,8 @@ export default async function RenderPage({
             ))}
           </div>
           <p className="mt-2 text-xs text-ink-faint">
-            New to the tenets?{" "}
-            <Link href="/tenets" className="text-gold underline-offset-2 hover:underline">
+            New to the principles?{" "}
+            <Link href="/principles" className="text-gold underline-offset-2 hover:underline">
               Read the library
             </Link>
             .

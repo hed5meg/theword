@@ -15,14 +15,23 @@ export function RenderingArticle({
   signedIn = false,
   resonated = false,
   path = "/",
+  showTenetInfo = false,
 }: {
   rendering: Rendering;
   variant?: "gathered" | "alternative";
   signedIn?: boolean;
   resonated?: boolean;
   path?: string;
+  showTenetInfo?: boolean;
 }) {
   const isGathered = variant === "gathered";
+  // Seed renderings are the project's own two tellings (no author profile).
+  const isSeed = !rendering.authorHandle;
+  const seedDescriptor = isSeed
+    ? rendering.author === "A Vision"
+      ? "The project's plainer vision telling"
+      : "The project's fuller telling"
+    : null;
 
   return (
     <article className={isGathered ? "" : "rounded-2xl border border-line bg-card/50 p-6 sm:p-8"}>
@@ -30,6 +39,11 @@ export function RenderingArticle({
         {isGathered && (
           <span className="rounded-full bg-glow px-3 py-1 text-xs font-medium tracking-wide text-gold">
             Gathered Rendering
+          </span>
+        )}
+        {isSeed && (
+          <span className="rounded-full border border-line bg-parchment-deep/70 px-3 py-1 text-xs font-medium tracking-wide text-ink-soft">
+            Seed telling
           </span>
         )}
         {rendering.authorHandle ? (
@@ -41,6 +55,12 @@ export function RenderingArticle({
           </Link>
         ) : (
           <span className="text-ink-soft">{rendering.author}</span>
+        )}
+        {seedDescriptor && (
+          <>
+            <span aria-hidden>·</span>
+            <span className="italic">{seedDescriptor}</span>
+          </>
         )}
         <span aria-hidden>·</span>
         <span>{rendering.language}</span>
@@ -57,7 +77,7 @@ export function RenderingArticle({
       </Prose>
 
       <footer className="mt-6 flex flex-col gap-4 border-t border-line/70 pt-4">
-        <TenetList tenets={rendering.tenets} />
+        <TenetList tenets={rendering.tenets} showInfo={showTenetInfo} />
         {rendering.id && (
           <div className="flex flex-wrap items-center justify-between gap-3">
             <ResonanceControl

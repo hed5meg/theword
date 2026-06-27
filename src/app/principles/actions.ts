@@ -10,14 +10,14 @@ export async function offerTenet(formData: FormData) {
   const {
     data: { user },
   } = await sb.auth.getUser();
-  if (!user) redirect("/signin?next=/tenets");
+  if (!user) redirect("/signin?next=/principles");
 
   const title = String(formData.get("title") ?? "").trim();
   const description = String(formData.get("description") ?? "").trim();
   const support = String(formData.get("support") ?? "").trim();
 
   if (!title || !description) {
-    redirect("/tenets?error=required");
+    redirect("/principles?error=required");
   }
 
   const base = slugify(title);
@@ -37,9 +37,9 @@ export async function offerTenet(formData: FormData) {
     result = await insert(`${slug}-${user.id.slice(0, 6)}`);
   }
   if (result.error) {
-    redirect("/tenets?error=save");
+    redirect("/principles?error=save");
   }
 
-  revalidatePath("/tenets");
-  redirect(`/tenets/${slug}`);
+  revalidatePath("/principles");
+  redirect(`/principles/${slug}`);
 }

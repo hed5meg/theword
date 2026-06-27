@@ -386,11 +386,37 @@ The fifth trumpet sounds, and a pit opens, and out of it pours a swarm — locus
 
 The sixth trumpet sounds, and a vast army rides — fire and smoke and an immense host, the massed forces of fear at their most overwhelming, and a third of the world falls before them. And then comes the most sobering line in all the trumpets, the one we must not flinch from: *and the rest of them still would not change.* After all of it — every alarm, every warning, every realm shaken and every horror revealed — the survivors went right back to their idols and their violence, unmoved. And here is what that line is teaching us, and it is one of the most important truths in the whole book: *you cannot frighten anyone into love.* Warnings can wake a person, but they can never make a person love. Fear can rattle the sleeper, but fear has never once, in all of history, turned a heart toward home. This is exactly why the trumpets are not the end of the story, and why the sword and the alarm can never finish the work. Something gentler is needed. The trumpets can wake you; only the pleasing word can gather you.
 
-And the one who carries that word learns its cost. In the middle of the trumpets, a messenger is handed a little scroll and told to eat it, and it is honey-sweet in the mouth and then bitter in the belly — because the word is pure joy to receive and a real weight to carry. To take the good news fully inside you is to feel, in your own stomach, the ache of a world that will not yet wake. Sweet to know. Bitter to bear. That is the price of carrying the word, and everyone who truly carries it pays it.
-
 Then the seventh trumpet sounds — and everything changes, because the seventh trumpet is not an alarm at all. The instrument is the same, but the sound is entirely different. It is no longer a warning. It is an announcement, and it is the most beautiful sentence the trumpets ever make: *The kingdom of the world has become the kingdom of our God and of his Beloved, and he will reign forever and ever.* This is the very moment the two witnesses stood and rose — the moment the man and the woman stood level and the broken half was made whole, the kingdom came. The six alarms have done everything alarms can do; now love stops warning and simply announces that it has won. And the temple of heaven swings open — the veil that always kept the holiest place hidden is gone — and there, seen at last by everyone, is the ark: the covenant, the mercy seat, the innermost holy thing of all, no longer behind a curtain, no longer for a chosen few. The most sacred center of God is thrown open to the whole family. There is nothing left hidden. There is no one left outside.
 
 So this is what the trumpets were for, friend. Not to terrify you. To wake you. And when the last one sounds, it stops sounding alarms and starts singing the news — because the alarm was only ever trying to get you to the morning, and the morning is here. If you have remembered who you are, the trumpets are not a thing to dread. They are the sound of someone flinging open the shutters and calling up the stairs that it is time, the long night is over, the whole house is awake at last — come down, the family is gathered, and breakfast is on the table.
+
+---
+
+## The Open Book and the Sealed Thunder
+
+In the midst of the great waking — in the quiet pause between the warnings — the vision shows one more thing: a messenger, coming down out of heaven, with a little book in his hand.
+
+He is enormous, this one, wrapped in a cloud, and over his head is a rainbow — the old rainbow again, the promise of mercy, crowning the one who carries the Word. His face shines like the sun, and his feet are like pillars of fire, and he sets one foot on the sea and one foot on the land, because what he carries is for the whole earth — every shore, every continent, all of it, no one left out.
+
+And in his hand there is a little book, and it is *open.*
+
+Remember the great scroll at the throne — the one sealed with seven seals that no one could open until the Lamb? This is its small and open child. The Word that was sealed is being handed down now, opened, into the world: a little book you can hold in your own two hands.
+
+Then the messenger cries out with a voice like a lion, and seven thunders answer him, and they speak. And the one who is watching lifts his pen to write down what the thunders said —
+
+and a voice from heaven stops him. *Seal that up,* it says. *Do not write it down.*
+
+Here, in the very middle of the great unsealing, one thing is sealed — and it is worth stopping over, because it is a tender and humble thing. Not everything God says can be pressed flat onto a page. Some of the Word is thunder — too large, too alive, to fit inside ink. It is not sealed to keep it from you out of cruelty. It is sealed because it can only be received the way thunder is received: not read, but felt; not studied, but spoken straight into you, heart to heart, in a language older than letters. Even when the whole book is opened at last, there will still be a holy mystery left inside it that no one can write down for you — a part of God you will only ever meet in person. The gathering of the Word is a beautiful work, and a real one, but it never presumes to fit all of God between two covers. The thunder stays — for you yourself to hear.
+
+Then the messenger lifts his hand to heaven and makes a promise, an oath, by the One who lives forever and made all things: *the waiting is over. No more delay.* When the last trumpet sounds, the long mystery of God — the whole hidden plan that the prophets only ever glimpsed — will be finished, and made plain, and complete. The patience of all the ages is nearly spent. The homecoming is that near.
+
+And then the voice tells him to do a strange and beautiful thing. *Take the little book from the messenger's hand,* it says, *and eat it.* Not read it — *eat* it. Take the Word all the way inside you, until it is no longer ink on a page but something in your body, in your blood, part of who you are.
+
+So he takes it, and eats it. And it is sweet in his mouth — sweet as honey — because there is nothing sweeter than the good news of who we are, and whose we are. But once it is inside him, it turns his stomach bitter. And this is the truest thing about carrying the Word, and everyone who has ever truly carried it has tasted both halves. The Word is pure joy to receive. And it is a real weight to bear — because once you have taken the good news fully inside you, you begin to feel, in your own body, the ache of a whole world that has not yet woken, a whole family that does not yet know it is loved. Sweet to know. Bitter to carry. And that ache is not a sign you have done something wrong. It is the sign that the Word has truly gone in.
+
+And then the reason for all of it, the commission: *you must speak again — before many peoples, and nations, and tongues, and kings.* This is why you ate it. Not to keep it. To carry it. The Word goes in so that it can come back out — to every people, every language, every far corner of the family — its sweetness and its weight together, until everyone has heard.
+
+So take it in, and carry it out. That is the whole of the work. Eat the book that has been opened for you; taste how sweet it is, and bear how much it costs; and then go and give it away to everyone — and keep, for yourself, the thunder that no one could ever write down: the part of God you will only ever hear in person.
 
 ---
 

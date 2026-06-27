@@ -8,12 +8,12 @@ import { offerTenet } from "./actions";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "The Tenets",
+  title: "The Principles",
   description:
     "The filtering principles the community reads by — lenses tested against love, themselves open to refinement.",
 };
 
-export default async function TenetsPage({
+export default async function PrinciplesPage({
   searchParams,
 }: {
   searchParams: Promise<{ error?: string }>;
@@ -27,7 +27,7 @@ export default async function TenetsPage({
   // Preserve group order as encountered.
   const groups: { name: string; tenets: Tenet[] }[] = [];
   for (const t of tenets) {
-    const name = t.group ?? "Other tenets";
+    const name = t.group ?? "Other principles";
     let g = groups.find((x) => x.name === name);
     if (!g) {
       g = { name, tenets: [] };
@@ -41,7 +41,7 @@ export default async function TenetsPage({
       <header className="text-center">
         <p className="eyebrow">The lenses we read by</p>
         <h1 className="mt-4 font-serif text-4xl tracking-tight text-ink sm:text-5xl">
-          The Tenets
+          The Principles
         </h1>
         <p className="mx-auto mt-4 max-w-xl font-serif text-lg italic text-ink-soft">
           Not rules to be obeyed but lenses to read by — and like everything in this
@@ -57,7 +57,7 @@ export default async function TenetsPage({
               {g.tenets.map((t) => (
                 <li key={t.slug}>
                   <Link
-                    href={`/tenets/${t.slug}`}
+                    href={`/principles/${t.slug}`}
                     className="block rounded-2xl border border-line bg-card/50 p-5 transition-colors hover:bg-glow/40"
                   >
                     <div className="flex items-baseline justify-between gap-4">
@@ -77,9 +77,9 @@ export default async function TenetsPage({
         ))}
       </div>
 
-      {/* Offer a tenet */}
+      {/* Offer a principle */}
       <section className="mt-16 rounded-2xl border border-gold-soft/40 bg-glow/30 p-6 sm:p-8">
-        <h2 className="font-serif text-2xl text-ink">Offer a tenet</h2>
+        <h2 className="font-serif text-2xl text-ink">Offer a principle</h2>
         <p className="mt-1.5 text-ink-soft">
           A principle you trust to tell wheat from tares. It will be held gently and
           refined by many hands.
@@ -95,7 +95,7 @@ export default async function TenetsPage({
             <input
               name="title"
               required
-              placeholder="The tenet, in a few words"
+              placeholder="The principle, in a few words"
               className="w-full rounded-xl border border-line bg-card px-4 py-3 text-ink outline-none focus:border-gold-soft"
             />
             <textarea
@@ -115,15 +115,15 @@ export default async function TenetsPage({
               type="submit"
               className="rounded-full bg-ink px-6 py-3 text-sm font-medium text-parchment transition-opacity hover:opacity-90"
             >
-              Offer this tenet
+              Offer this principle
             </button>
           </form>
         ) : (
           <Link
-            href="/signin?next=/tenets"
+            href="/signin?next=/principles"
             className="ui mt-6 inline-block rounded-full border border-gold-soft/60 px-6 py-3 text-sm font-medium text-gold transition-colors hover:bg-glow"
           >
-            Sign in to offer a tenet
+            Sign in to offer a principle
           </Link>
         )}
       </section>

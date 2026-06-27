@@ -113,7 +113,7 @@ export async function getOpenFlags(): Promise<FlagItem[]> {
       const x = map.get(i.targetId);
       if (x) {
         i.targetSnippet = x.title;
-        i.targetHref = `/tenets/${x.slug}`;
+        i.targetHref = `/principles/${x.slug}`;
       }
     });
   }
