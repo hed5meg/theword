@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Add your light — effect prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root[data-theme="light"]{
+    --paper:#FAF8F4; --card:#FFFFFF; --ink:#2B2A28; --ink-soft:#5C574E;
+    --ink-faint:#6E685C; --gold:#E8B04B; --gold-strong:#D89A2C; --gold-ink:#3A2A08;
+    --line:#E0D9CC; --glow:232,176,75; --bloom:255,250,240;
+  }
+  :root[data-theme="dark"]{
+    --paper:#17150F; --card:#211E18; --ink:#ECE7DE; --ink-soft:#C9C2B5;
+    --ink-faint:#A39C8E; --gold:#E8B04B; --gold-strong:#F0C063; --gold-ink:#2A1E06;
+    --line:#332E26; --glow:232,176,75; --bloom:255,244,214;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0;background:var(--paper);color:var(--ink);
+    font-family:'EB Garamond',Georgia,serif;
+    transition:background .4s ease, color .4s ease;}
+  .ui{font-family:'Inter',system-ui,sans-serif}
+
+  /* the part that brightens during the bloom */
+  .stage{min-height:100%;}
+
+  header{border-bottom:1px solid rgba(0,0,0,0);border-color:var(--line);}
+  .bar{max-width:64rem;margin:0 auto;display:flex;align-items:center;
+    justify-content:space-between;gap:1rem;padding:1rem 1.5rem;}
+  .brand{display:flex;align-items:baseline;gap:.6rem;text-decoration:none;color:var(--ink)}
+  .brand .mark{color:var(--gold)}
+  .brand .name{font-size:1.15rem;letter-spacing:-.01em}
+  nav{display:flex;align-items:center;gap:1.25rem;font-size:.9rem}
+  nav a{color:var(--ink-soft);text-decoration:none;transition:color .2s}
+  nav a:hover{color:var(--ink)}
+
+  /* ---- the "Add your light" CTA ---- */
+  .light-cta{position:relative;display:inline-flex;align-items:center;gap:.5rem;
+    font-family:'Inter',system-ui,sans-serif;font-weight:500;font-size:.9rem;
+    color:var(--gold-ink);background:var(--gold);border:1px solid var(--gold-strong);
+    padding:.55rem 1.05rem;border-radius:999px;cursor:pointer;
+    text-decoration:none;line-height:1;
+    box-shadow:0 0 0 0 rgba(var(--glow),.0), 0 2px 10px -2px rgba(var(--glow),.55);
+    transition:transform .18s ease, box-shadow .25s ease, background .2s ease;
+    animation:breathe 3.2s ease-in-out infinite;}
+  .light-cta .star{font-family:'EB Garamond',serif;font-size:1.05rem;line-height:0;
+    transition:transform .25s ease;}
+  .light-cta:hover{transform:translateY(-1px);background:var(--gold-strong);
+    box-shadow:0 0 0 4px rgba(var(--glow),.18), 0 6px 22px -4px rgba(var(--glow),.8);}
+  .light-cta:hover .star{transform:rotate(18deg) scale(1.12)}
+  .light-cta:active{transform:translateY(0) scale(.98)}
+  .light-cta:focus-visible{outline:2px solid var(--gold-strong);outline-offset:3px}
+  @keyframes breathe{
+    0%,100%{box-shadow:0 0 0 0 rgba(var(--glow),0), 0 2px 10px -2px rgba(var(--glow),.45)}
+    50%    {box-shadow:0 0 0 5px rgba(var(--glow),.12), 0 3px 16px -3px rgba(var(--glow),.7)}
+  }
+
+  main{max-width:48rem;margin:0 auto;padding:4rem 1.5rem 6rem;}
+  .hero{text-align:center}
+  .eyebrow{font-family:'Inter',sans-serif;font-size:.72rem;letter-spacing:.18em;
+    text-transform:uppercase;color:var(--ink-faint)}
+  h1{font-size:2.8rem;letter-spacing:-.02em;margin:.6rem 0 0}
+  .lede{font-style:italic;font-size:1.25rem;color:var(--ink-soft);
+    max-width:34rem;margin:1rem auto 0;line-height:1.5}
+  .hero-cta{margin-top:2rem}
+  .hero-cta .light-cta{font-size:1rem;padding:.7rem 1.4rem}
+
+  .cards{margin-top:3.5rem;border:1px solid var(--line);border-radius:1rem;
+    overflow:hidden;background:color-mix(in srgb, var(--card) 50%, transparent)}
+  .row{display:flex;align-items:baseline;justify-content:space-between;gap:1rem;
+    padding:1rem 1.25rem;border-top:1px solid var(--line);text-decoration:none;color:var(--ink)}
+  .row:first-child{border-top:0}
+  .row:hover{background:rgba(var(--glow),.07)}
+  .row .t{font-size:1.1rem}
+  .row .ref{display:block;font-family:'Inter',sans-serif;font-size:.7rem;
+    letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint);margin-top:.15rem}
+  .row .count{font-family:'Inter',sans-serif;font-size:.72rem;color:var(--ink-faint);flex:none}
+
+  /* ---- the bloom overlay ---- */
+  #bloom{position:fixed;inset:0;z-index:50;pointer-events:none;opacity:0;}
+  :root[data-theme="light"] #bloom{
+    background:
+      radial-gradient(circle at var(--x,50%) var(--y,50%),
+        rgba(255,252,244,1) 0%, rgba(255,224,150,.82) 22%,
+        rgba(250,205,125,.4) 46%, rgba(250,205,125,0) 72%),
+      linear-gradient(rgba(255,238,196,.55), rgba(255,238,196,.55));}
+  :root[data-theme="dark"] #bloom{
+    background:
+      radial-gradient(circle at var(--x,50%) var(--y,50%),
+        rgba(255,248,224,1) 0%, rgba(255,208,112,.88) 22%,
+        rgba(240,180,90,.45) 48%, rgba(240,180,90,0) 74%),
+      linear-gradient(rgba(255,224,150,.30), rgba(255,224,150,.30));}
+
+  /* ---- tuning panel (demo only — not part of the site) ---- */
+  .panel{position:fixed;right:1rem;bottom:1rem;z-index:60;width:250px;
+    font-family:'Inter',sans-serif;background:var(--card);color:var(--ink);
+    border:1px solid var(--line);border-radius:14px;padding:14px 16px;
+    box-shadow:0 10px 30px -10px rgba(0,0,0,.25)}
+  .panel h2{margin:0 0 10px;font-size:.8rem;letter-spacing:.04em;text-transform:uppercase;
+    color:var(--ink-faint);font-weight:500}
+  .panel label{display:block;font-size:.78rem;color:var(--ink-soft);margin:10px 0 3px}
+  .panel input[type=range]{width:100%}
+  .panel .presets{display:flex;gap:6px;margin-top:6px}
+  .panel .presets button, .panel .util button{flex:1;font-family:'Inter',sans-serif;
+    font-size:.74rem;padding:6px 4px;border:1px solid var(--line);background:transparent;
+    color:var(--ink);border-radius:8px;cursor:pointer}
+  .panel .presets button:hover,.panel .util button:hover{background:rgba(var(--glow),.12)}
+  .panel .util{display:flex;gap:6px;margin-top:10px}
+  .panel .chk{display:flex;align-items:center;gap:7px;margin-top:11px;font-size:.78rem;color:var(--ink-soft)}
+  .val{color:var(--ink);font-weight:500}
+
+  @media (prefers-reduced-motion: reduce){
+    .light-cta{animation:none}
+  }
+</style>
+</head>
+<body>
+<div id="bloom"></div>
+
+<div class="stage" id="stage">
+  <header>
+    <div class="bar">
+      <a class="brand" href="#"><span class="mark" aria-hidden="true">✦</span><span class="name">The Unsealed Revelation</span></a>
+      <nav class="ui">
+        <a href="#">Read</a>
+        <a href="#">Principles</a>
+        <button class="light-cta" data-light><span class="star" aria-hidden="true">✦</span>Add your light</button>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <p class="eyebrow">The gathered book</p>
+      <h1>Read the Revelation</h1>
+      <p class="lede">The whole story of the human family, from the first garden to the last — told in a love-ordered telling, and grounded always in the canonical text.</p>
+      <div class="hero-cta">
+        <button class="light-cta" data-light><span class="star" aria-hidden="true">✦</span>Add your light</button>
+      </div>
+    </section>
+
+    <div class="cards">
+      <a class="row" href="#"><span><span class="t">The Prologue</span><span class="ref">Rev 1:1-20</span></span><span class="count">2 renderings</span></a>
+      <a class="row" href="#"><span><span class="t">The Woman Clothed with the Sun</span><span class="ref">Rev 12:1-6</span></span><span class="count">2 renderings</span></a>
+      <a class="row" href="#"><span><span class="t">The Seven Churches</span><span class="ref">Rev 2-3</span></span><span class="count">7 renderings</span></a>
+      <a class="row" href="#"><span><span class="t">The New Jerusalem</span><span class="ref">Rev 21:1-22:21</span></span><span class="count">2 renderings</span></a>
+    </div>
+  </main>
+</div>
+
+<aside class="panel ui" aria-label="Effect tuning (demo only)">
+  <h2>Tune the light</h2>
+  <label>Intensity <span class="val" id="iVal">0.50</span></label>
+  <input type="range" id="intensity" min="0.2" max="0.95" step="0.05" value="0.5" />
+  <label>Duration <span class="val" id="dVal">1500 ms</span></label>
+  <input type="range" id="duration" min="400" max="3000" step="50" value="1500" />
+  <label>Brightness lift <span class="val" id="bVal">0.30</span></label>
+  <input type="range" id="bright" min="0" max="0.3" step="0.02" value="0.3" />
+  <div class="presets">
+    <button data-preset="subtle">Subtle</button>
+    <button data-preset="standard">Standard</button>
+    <button data-preset="dramatic">Dramatic</button>
+  </div>
+  <div class="presets" style="margin-top:6px">
+    <button data-preset="lingering">Lingering</button>
+    <button data-preset="benediction">Benediction</button>
+  </div>
+  <div class="presets" style="margin-top:6px">
+    <button data-preset="dawn">Dawn</button>
+    <button data-preset="vigil">Vigil</button>
+  </div>
+  <label class="chk"><input type="checkbox" id="fromCenter" checked /> Bloom from center (not button)</label>
+  <label class="chk"><input type="checkbox" id="simReduce" /> Simulate reduced motion</label>
+  <div class="util">
+    <button id="themeBtn">Toggle dark</button>
+    <button id="replayBtn">Replay ✦</button>
+  </div>
+</aside>
+
+<script>
+const bloom = document.getElementById('bloom');
+const stage = document.getElementById('stage');
+const intensity = document.getElementById('intensity');
+const duration = document.getElementById('duration');
+const bright = document.getElementById('bright');
+const iVal = document.getElementById('iVal'), dVal = document.getElementById('dVal'), bVal = document.getElementById('bVal');
+const fromCenter = document.getElementById('fromCenter');
+const simReduce = document.getElementById('simReduce');
+
+function sync(){ iVal.textContent = (+intensity.value).toFixed(2);
+  dVal.textContent = duration.value + ' ms'; bVal.textContent = (+bright.value).toFixed(2); }
+[intensity,duration,bright].forEach(el=>el.addEventListener('input',sync)); sync();
+
+const presets = {
+  subtle:      {i:0.45, d:700,  b:0.06},
+  standard:    {i:0.75, d:950,  b:0.12},
+  dramatic:    {i:0.92, d:1300, b:0.22},
+  lingering:   {i:0.78, d:1800, b:0.14},
+  benediction: {i:0.85, d:2200, b:0.18},
+  dawn:        {i:0.68, d:2600, b:0.11},
+  vigil:       {i:0.58, d:3000, b:0.09},
+};
+document.querySelectorAll('[data-preset]').forEach(btn=>btn.addEventListener('click',()=>{
+  const p = presets[btn.dataset.preset];
+  intensity.value=p.i; duration.value=p.d; bright.value=p.b; sync();
+  addLight(window.innerWidth/2, window.innerHeight*0.35);
+}));
+
+function prefersReduced(){
+  return simReduce.checked || window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+
+function addLight(x, y){
+  bloom.style.setProperty('--x', x+'px');
+  bloom.style.setProperty('--y', y+'px');
+
+  if(prefersReduced()){
+    // gentle, single, non-flashing acknowledgement — no brightness spike, low peak
+    bloom.animate(
+      [{opacity:0},{opacity:0.18,offset:.4},{opacity:0}],
+      {duration:600, easing:'ease-out'}
+    );
+    return;
+  }
+
+  const peak = +intensity.value;
+  const dur = +duration.value;
+  const lift = +bright.value;
+
+  bloom.animate(
+    [
+      {opacity:0, easing:'cubic-bezier(.16,.84,.36,1)'},
+      {opacity:peak, offset:0.12, easing:'linear'},
+      {opacity:0}
+    ],
+    {duration:dur}
+  );
+  stage.animate(
+    [
+      {filter:'brightness(1)', easing:'cubic-bezier(.16,.84,.36,1)'},
+      {filter:`brightness(${1+lift})`, offset:0.12, easing:'linear'},
+      {filter:'brightness(1)'}
+    ],
+    {duration:dur}
+  );
+}
+
+document.querySelectorAll('[data-light]').forEach(btn=>{
+  btn.addEventListener('click',(e)=>{
+    let x = window.innerWidth/2, y = window.innerHeight*0.35;
+    if(!fromCenter.checked){ const r = btn.getBoundingClientRect(); x = r.left+r.width/2; y = r.top+r.height/2; }
+    addLight(x,y);
+  });
+});
+
+document.getElementById('replayBtn').addEventListener('click',()=>addLight(window.innerWidth/2, window.innerHeight*0.35));
+document.getElementById('themeBtn').addEventListener('click',()=>{
+  const r = document.documentElement;
+  r.dataset.theme = r.dataset.theme==='dark' ? 'light' : 'dark';
+});
+</script>
+</body>
+</html>

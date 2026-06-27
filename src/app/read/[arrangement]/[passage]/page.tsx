@@ -19,6 +19,7 @@ import {
   StewardPassageTools,
   GatheredHistory,
 } from "@/components/StewardPassageTools";
+import { ComparePanel, type CompareText } from "@/components/ComparePanel";
 
 export const dynamic = "force-dynamic";
 
@@ -40,10 +41,13 @@ export async function generateMetadata({
 
 export default async function PassagePage({
   params,
+  searchParams,
 }: {
   params: Promise<Params>;
+  searchParams: Promise<{ compare?: string }>;
 }) {
   const { arrangement, passage } = await params;
+  const { compare } = await searchParams;
   const found = await getArrangementPassage(arrangement, passage);
   if (!found) notFound();
 
@@ -76,6 +80,32 @@ export default async function PassagePage({
   const signedIn = Boolean(profile);
   const isSteward = profile?.role === "steward" || profile?.role === "admin";
   const offerHref = `/render/${p.slug}?arr=${arrangement}&entry=${passage}`;
+
+  // Comparison mode: build the selectable texts (traditional + every rendering).
+  const compareTexts: CompareText[] = [];
+  if (p.traditionalText) {
+    compareTexts.push({
+      key: "traditional",
+      label: "Traditional text (KJV)",
+      kind: "traditional",
+      body: p.traditionalText,
+      canonicalRef: p.canonicalRef,
+    });
+  }
+  for (const r of p.renderings) {
+    compareTexts.push({
+      key: r.isGathered ? "gathered" : (r.id ?? ""),
+      label: r.isGathered ? `Gathered Rendering — ${r.author}` : r.author,
+      kind: "rendering",
+      body: r.body,
+      language: r.language,
+      tradition: r.tradition,
+      tenets: r.tenets.map((t) => ({ slug: t.slug, title: t.title })),
+    });
+  }
+  const canCompare = compareTexts.length >= 2;
+  const compareOn = canCompare && typeof compare === "string";
+  const [cmpLeft, cmpRight] = (compare ?? "traditional,gathered").split(",");
 
   return (
     <div className="mx-auto max-w-3xl px-5 py-12 sm:px-8">
@@ -111,13 +141,42 @@ export default async function PassagePage({
         </div>
       </div>
 
-      <header className="border-b border-line/70 pb-8">
-        <p className="eyebrow">{p.canonicalRef}</p>
-        <h1 className="mt-3 font-serif text-3xl tracking-tight text-ink sm:text-4xl">
-          {p.title}
-        </h1>
+      <header className="flex items-start justify-between gap-4 border-b border-line/70 pb-8">
+        <div>
+          <p className="eyebrow">{p.canonicalRef}</p>
+          <h1 className="mt-3 font-serif text-3xl tracking-tight text-ink sm:text-4xl">
+            {p.title}
+          </h1>
+        </div>
+        {canCompare ? (
+          <Link
+            href={
+              compareOn ? path : `${path}?compare=traditional,gathered`
+            }
+            scroll={false}
+            className="ui mt-1 shrink-0 rounded-full border border-gold-soft/60 px-4 py-1.5 text-sm text-gold transition-colors hover:bg-glow"
+          >
+            {compareOn ? "Close compare" : "Compare"}
+          </Link>
+        ) : (
+          <span
+            title="This passage has only one text to read."
+            className="ui mt-1 shrink-0 cursor-not-allowed rounded-full border border-line px-4 py-1.5 text-sm text-ink-faint/70"
+          >
+            Compare
+          </span>
+        )}
       </header>
 
+      {compareOn ? (
+        <ComparePanel
+          texts={compareTexts}
+          initialLeft={cmpLeft}
+          initialRight={cmpRight}
+          basePath={path}
+        />
+      ) : (
+        <>
       {/* Traditional text */}
       {p.traditionalText && (
         <details className="group mt-8 rounded-2xl border border-line bg-parchment-deep/40 px-5 py-4">
@@ -202,6 +261,8 @@ export default async function PassagePage({
           </Link>
         </div>
       </section>
+        </>
+      )}
 
       {/* Steward tools */}
       {isSteward && p.id && (
