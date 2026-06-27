@@ -92,7 +92,7 @@ export default async function MemberPage({
             {renderings.map((r) => (
               <li key={`${r.movementSlug}/${r.passageSlug}`}>
                 <Link
-                  href={`/read/${r.movementSlug}/${r.passageSlug}`}
+                  href={`/read/the-canonical-order/${r.passageSlug}`}
                   className="flex items-baseline justify-between gap-4 px-5 py-4 transition-colors hover:bg-glow/50"
                 >
                   <span className="flex flex-col">

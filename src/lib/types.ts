@@ -16,9 +16,9 @@ export interface Profile {
 
 export type RenderingStatus = "draft" | "submitted" | "gathered" | "archived";
 
-export type ResonanceTarget = "rendering" | "tenet" | "reflection";
+export type ResonanceTarget = "rendering" | "tenet" | "reflection" | "arrangement";
 
-export type ReflectionTarget = "passage" | "rendering" | "tenet";
+export type ReflectionTarget = "passage" | "rendering" | "tenet" | "arrangement";
 
 export type FlagTarget = "passage" | "rendering" | "tenet" | "reflection";
 
@@ -130,4 +130,62 @@ export interface BookStats {
   passages: number;
   renderings: number;
   tenets: number;
+}
+
+// ---- Arrangements ----------------------------------------------------------
+export interface ArrangementMeta {
+  slug: string;
+  title: string;
+  description?: string;
+  isDefault: boolean;
+  isSystem: boolean;
+  authorName?: string;
+  authorHandle?: string;
+}
+
+export interface ArrangementOutlineEntry {
+  /** Per-arrangement display slug (for routing) and title. */
+  slug: string;
+  title: string;
+  canonicalRef: string;
+  renderingCount: number;
+}
+
+export interface ArrangementOutlineGroup {
+  title?: string;
+  subtitle?: string;
+  entries: ArrangementOutlineEntry[];
+}
+
+export interface ArrangementOutline {
+  arrangement: ArrangementMeta;
+  groups: ArrangementOutlineGroup[];
+  total: number;
+}
+
+export interface ArrangementNavRef {
+  arrangementSlug: string;
+  passageSlug: string;
+  title: string;
+}
+
+export interface ArrangementPassageLocation {
+  arrangement: ArrangementMeta;
+  movementTitle?: string;
+  passage: Passage;
+  /** The per-arrangement entry slug used in the URL. */
+  entrySlug: string;
+  position: number;
+  total: number;
+  previous: ArrangementNavRef | null;
+  next: ArrangementNavRef | null;
+}
+
+export interface ArrangementCard extends ArrangementMeta {
+  id: string;
+  movementCount: number;
+  passageCount: number;
+  resonanceCount: number;
+  /** A compact preview: movement titles, or the first few passage titles. */
+  preview: string[];
 }

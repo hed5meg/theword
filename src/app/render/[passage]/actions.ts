@@ -12,8 +12,10 @@ export async function createRendering(formData: FormData) {
 
   const passageId = String(formData.get("passage_id") ?? "");
   const passageSlug = String(formData.get("passage_slug") ?? "");
-  const movementSlug = String(formData.get("movement_slug") ?? "");
-  const backTo = `/read/${movementSlug}/${passageSlug}`;
+  // Return to the passage within the arrangement the reader came from.
+  const backArr = String(formData.get("back_arr") ?? "the-love-ordered-arrangement");
+  const backEntry = String(formData.get("back_entry") ?? passageSlug);
+  const backTo = `/read/${backArr}/${backEntry}`;
 
   if (!user) redirect(`/signin?next=/render/${passageSlug}`);
 

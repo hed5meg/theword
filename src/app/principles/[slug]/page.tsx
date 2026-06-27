@@ -98,7 +98,7 @@ export default async function TenetPage({
             {usages.map((u, i) => (
               <li key={`${u.movementSlug}/${u.passageSlug}/${i}`}>
                 <Link
-                  href={`/read/${u.movementSlug}/${u.passageSlug}`}
+                  href={`/read/the-canonical-order/${u.passageSlug}`}
                   className="flex items-baseline justify-between gap-4 px-5 py-4 transition-colors hover:bg-glow/50"
                 >
                   <span className="flex flex-col">

@@ -72,7 +72,7 @@ export async function getOpenFlags(): Promise<FlagItem[]> {
       if (x) {
         i.targetSnippet = snippet(x.body);
         i.renderingStatus = x.status;
-        i.targetHref = `/read/${x.passages.movements.slug}/${x.passages.slug}`;
+        i.targetHref = `/read/the-canonical-order/${x.passages.slug}`;
       }
     });
   }
@@ -137,7 +137,7 @@ export async function getOpenFlags(): Promise<FlagItem[]> {
       const x = map.get(i.targetId);
       if (x) {
         i.targetSnippet = x.title;
-        i.targetHref = `/read/${x.movements.slug}/${x.slug}`;
+        i.targetHref = `/read/the-canonical-order/${x.slug}`;
       }
     });
   }

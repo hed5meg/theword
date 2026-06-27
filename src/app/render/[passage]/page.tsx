@@ -15,7 +15,7 @@ export default async function RenderPage({
   searchParams,
 }: {
   params: Promise<{ passage: string }>;
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; arr?: string; entry?: string }>;
 }) {
   const { passage: passageSlug } = await params;
   const passage = await getPassageRef(passageSlug);
@@ -24,15 +24,18 @@ export default async function RenderPage({
   const user = await getUser();
   if (!user) redirect(`/signin?next=/render/${passageSlug}`);
 
-  const [tenets, { error }] = await Promise.all([getTenets(), searchParams]);
+  const [tenets, { error, arr, entry }] = await Promise.all([
+    getTenets(),
+    searchParams,
+  ]);
+  const backArr = arr || "the-love-ordered-arrangement";
+  const backEntry = entry || passage.slug;
+  const backTo = `/read/${backArr}/${backEntry}`;
 
   return (
     <div className="mx-auto max-w-2xl px-5 py-12 sm:px-8">
       <nav className="ui mb-8 flex items-center gap-2 text-sm text-ink-faint">
-        <Link
-          href={`/read/${passage.movementSlug}/${passage.slug}`}
-          className="transition-colors hover:text-ink-soft"
-        >
+        <Link href={backTo} className="transition-colors hover:text-ink-soft">
           ← Back to the passage
         </Link>
       </nav>
@@ -60,7 +63,8 @@ export default async function RenderPage({
       <form action={createRendering} className="ui mt-8 space-y-6">
         <input type="hidden" name="passage_id" value={passage.id} />
         <input type="hidden" name="passage_slug" value={passage.slug} />
-        <input type="hidden" name="movement_slug" value={passage.movementSlug} />
+        <input type="hidden" name="back_arr" value={backArr} />
+        <input type="hidden" name="back_entry" value={backEntry} />
 
         {error === "required" && (
           <p className="text-sm text-red-700">Please write a rendering before offering it.</p>
@@ -144,7 +148,7 @@ export default async function RenderPage({
             Offer this rendering
           </button>
           <Link
-            href={`/read/${passage.movementSlug}/${passage.slug}`}
+            href={backTo}
             className="text-sm text-ink-faint transition-colors hover:text-ink-soft"
           >
             Cancel

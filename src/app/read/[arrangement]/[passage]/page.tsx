@@ -1,14 +1,20 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getPassage, getOutline } from "@/lib/data";
+import {
+  getArrangementPassage,
+  getArrangementOutline,
+  getArrangementMetaList,
+} from "@/lib/data/arrangements";
 import { getProfile } from "@/lib/auth";
-import { PassageNav } from "@/components/PassageNav";
 import { getMyResonatedIds } from "@/lib/resonance";
 import { getReflections } from "@/lib/data/reflections";
 import { getGatheredHistory } from "@/lib/data/gathering";
 import { RenderingArticle } from "@/components/RenderingArticle";
 import { Reflections } from "@/components/Reflections";
+import { PassageNav } from "@/components/PassageNav";
+import { ArrangementSelector } from "@/components/ArrangementSelector";
+import { RememberArrangement } from "@/components/RememberArrangement";
 import {
   StewardPassageTools,
   GatheredHistory,
@@ -16,15 +22,15 @@ import {
 
 export const dynamic = "force-dynamic";
 
-type Params = { movement: string; passage: string };
+type Params = { arrangement: string; passage: string };
 
 export async function generateMetadata({
   params,
 }: {
   params: Promise<Params>;
 }): Promise<Metadata> {
-  const { movement, passage } = await params;
-  const found = await getPassage(movement, passage);
+  const { arrangement, passage } = await params;
+  const found = await getArrangementPassage(arrangement, passage);
   if (!found) return {};
   return {
     title: `${found.passage.title} (${found.passage.canonicalRef})`,
@@ -37,53 +43,72 @@ export default async function PassagePage({
 }: {
   params: Promise<Params>;
 }) {
-  const { movement, passage } = await params;
-  const found = await getPassage(movement, passage);
+  const { arrangement, passage } = await params;
+  const found = await getArrangementPassage(arrangement, passage);
   if (!found) notFound();
 
-  const { passage: p, movementTitle, previous, next } = found;
+  const {
+    passage: p,
+    arrangement: arr,
+    movementTitle,
+    previous,
+    next,
+    position,
+    total,
+  } = found;
   const gathered = p.gatheredRendering;
   const alternatives = p.renderings.filter((r) => !r.isGathered);
-  // Community renderings have an author profile; seed tellings do not.
   const communityRenderings = alternatives.filter((r) => r.authorHandle);
 
-  const path = `/read/${movement}/${passage}`;
-  const [profile, resonated, reflections, history, outline] = await Promise.all([
-    getProfile(),
-    getMyResonatedIds(
-      "rendering",
-      p.renderings.map((r) => r.id).filter((id): id is string => Boolean(id)),
-    ),
-    p.id ? getReflections("passage", p.id) : Promise.resolve([]),
-    p.id ? getGatheredHistory(p.id) : Promise.resolve([]),
-    getOutline(),
-  ]);
+  const path = `/read/${arrangement}/${passage}`;
+  const [profile, resonated, reflections, history, outline, arrangements] =
+    await Promise.all([
+      getProfile(),
+      getMyResonatedIds(
+        "rendering",
+        p.renderings.map((r) => r.id).filter((id): id is string => Boolean(id)),
+      ),
+      p.id ? getReflections("passage", p.id) : Promise.resolve([]),
+      p.id ? getGatheredHistory(p.id) : Promise.resolve([]),
+      getArrangementOutline(arrangement),
+      getArrangementMetaList(),
+    ]);
   const signedIn = Boolean(profile);
   const isSteward = profile?.role === "steward" || profile?.role === "admin";
-
-  const flat = outline.flatMap((m) => m.passages);
-  const total = flat.length;
-  const position =
-    flat.findIndex((x) => x.movementSlug === movement && x.slug === passage) + 1;
+  const offerHref = `/render/${p.slug}?arr=${arrangement}&entry=${passage}`;
 
   return (
     <div className="mx-auto max-w-3xl px-5 py-12 sm:px-8">
+      <RememberArrangement slug={arr.slug} />
+
       {/* Context + wayfinding */}
-      <div className="mb-8 flex items-center justify-between gap-4">
+      <div className="mb-8 flex flex-wrap items-center justify-between gap-3">
         <nav className="ui flex items-center gap-2 text-sm text-ink-faint">
-          <Link href="/read" className="transition-colors hover:text-ink-soft">
-            The gathering
+          <Link
+            href={`/read/${arr.slug}`}
+            className="transition-colors hover:text-ink-soft"
+          >
+            {arr.title}
           </Link>
-          <span aria-hidden>›</span>
-          <span className="text-ink-soft">{movementTitle}</span>
+          {movementTitle && (
+            <>
+              <span aria-hidden>›</span>
+              <span className="text-ink-soft">{movementTitle}</span>
+            </>
+          )}
         </nav>
-        <PassageNav
-          outline={outline}
-          movementSlug={movement}
-          passageSlug={passage}
-          position={position}
-          total={total}
-        />
+        <div className="flex items-center gap-3">
+          <ArrangementSelector arrangements={arrangements} current={arr.slug} />
+          {outline && (
+            <PassageNav
+              arrangementSlug={arr.slug}
+              groups={outline.groups}
+              currentSlug={passage}
+              position={position}
+              total={total}
+            />
+          )}
+        </div>
       </div>
 
       <header className="border-b border-line/70 pb-8">
@@ -93,7 +118,7 @@ export default async function PassagePage({
         </h1>
       </header>
 
-      {/* Traditional text, available alongside for grounding */}
+      {/* Traditional text */}
       {p.traditionalText && (
         <details className="group mt-8 rounded-2xl border border-line bg-parchment-deep/40 px-5 py-4">
           <summary className="ui flex cursor-pointer list-none items-center justify-between text-sm text-ink-soft">
@@ -113,7 +138,7 @@ export default async function PassagePage({
         </details>
       )}
 
-      {/* The Gathered Rendering */}
+      {/* Gathered Rendering */}
       {gathered ? (
         <section className="mt-12">
           <RenderingArticle
@@ -133,13 +158,9 @@ export default async function PassagePage({
 
       <GatheredHistory events={history} />
 
-      {/* Alternative renderings, held side by side */}
+      {/* Renderings side by side */}
       <section className="mt-16">
-        <div className="flex items-baseline justify-between gap-4">
-          <h2 className="font-serif text-2xl text-ink">
-            Renderings held side by side
-          </h2>
-        </div>
+        <h2 className="font-serif text-2xl text-ink">Renderings held side by side</h2>
         <p className="mt-1.5 text-ink-soft">
           Other tellings of this passage, offered in love — never ranked, never in
           competition.
@@ -174,7 +195,7 @@ export default async function PassagePage({
             Offer your own plain, pure rendering — it will sit beside the others.
           </p>
           <Link
-            href={`/render/${p.slug}`}
+            href={offerHref}
             className="mt-4 inline-block rounded-full border border-gold-soft/60 px-6 py-2.5 text-sm font-medium text-gold transition-colors hover:bg-glow"
           >
             Offer a rendering
@@ -198,12 +219,12 @@ export default async function PassagePage({
         />
       )}
 
-      {/* Gentle next / previous */}
+      {/* Previous / next within the arrangement */}
       <nav className="ui mt-16 flex items-stretch justify-between gap-4 border-t border-line/70 pt-8 text-sm">
         {previous ? (
           <Link
-            href={`/read/${previous.movementSlug}/${previous.passageSlug}`}
-            className="group flex max-w-[45%] flex-col text-left transition-colors hover:text-ink"
+            href={`/read/${previous.arrangementSlug}/${previous.passageSlug}`}
+            className="group flex max-w-[40%] flex-col text-left transition-colors hover:text-ink"
           >
             <span className="text-xs uppercase tracking-wider text-ink-faint">
               ← Previous
@@ -220,8 +241,8 @@ export default async function PassagePage({
         </span>
         {next ? (
           <Link
-            href={`/read/${next.movementSlug}/${next.passageSlug}`}
-            className="group flex max-w-[45%] flex-col text-right transition-colors hover:text-ink"
+            href={`/read/${next.arrangementSlug}/${next.passageSlug}`}
+            className="group flex max-w-[40%] flex-col text-right transition-colors hover:text-ink"
           >
             <span className="text-xs uppercase tracking-wider text-ink-faint">
               Next →

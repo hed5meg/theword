@@ -1,21 +1,21 @@
 import Link from "next/link";
-import type { MovementOutline } from "@/lib/types";
+import type { ArrangementOutlineGroup } from "@/lib/types";
 
 /**
- * In-passage wayfinding: a "Passage X of Y" progress indicator and a jump menu
- * listing every movement and passage. The menu is a native <details> disclosure
- * so it is fully keyboard- and screen-reader-accessible without JavaScript.
+ * In-passage wayfinding within the active arrangement: a "Passage X of Y"
+ * indicator and a jump menu (movements → passages). Native <details>, so it's
+ * fully keyboard- and screen-reader-accessible without JavaScript.
  */
 export function PassageNav({
-  outline,
-  movementSlug,
-  passageSlug,
+  arrangementSlug,
+  groups,
+  currentSlug,
   position,
   total,
 }: {
-  outline: MovementOutline[];
-  movementSlug: string;
-  passageSlug: string;
+  arrangementSlug: string;
+  groups: ArrangementOutlineGroup[];
+  currentSlug: string;
   position: number;
   total: number;
 }) {
@@ -33,19 +33,20 @@ export function PassageNav({
           aria-label="All passages"
           className="absolute right-0 z-30 mt-2 max-h-[70vh] w-72 overflow-y-auto rounded-xl border border-line bg-card p-3 shadow-lg"
         >
-          {outline.map((m) => (
-            <div key={m.slug} className="mb-3 last:mb-0">
-              <p className="px-2 py-1 text-xs uppercase tracking-wider text-ink-faint">
-                {m.title}
-              </p>
+          {groups.map((g, gi) => (
+            <div key={g.title ?? `g-${gi}`} className="mb-3 last:mb-0">
+              {g.title && (
+                <p className="px-2 py-1 text-xs uppercase tracking-wider text-ink-faint">
+                  {g.title}
+                </p>
+              )}
               <ul>
-                {m.passages.map((p) => {
-                  const current =
-                    p.movementSlug === movementSlug && p.slug === passageSlug;
+                {g.entries.map((p) => {
+                  const current = p.slug === currentSlug;
                   return (
                     <li key={p.slug}>
                       <Link
-                        href={`/read/${m.slug}/${p.slug}`}
+                        href={`/read/${arrangementSlug}/${p.slug}`}
                         aria-current={current ? "page" : undefined}
                         className={`block rounded-lg px-2 py-1.5 text-sm transition-colors ${
                           current

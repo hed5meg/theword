@@ -19,6 +19,12 @@ export async function SiteHeader() {
           <Link href="/read" className="text-ink-soft transition-colors hover:text-ink">
             Read
           </Link>
+          <Link
+            href="/arrangements"
+            className="hidden text-ink-soft transition-colors hover:text-ink sm:inline"
+          >
+            Arrangements
+          </Link>
           <Link href="/principles" className="text-ink-soft transition-colors hover:text-ink">
             Principles
           </Link>

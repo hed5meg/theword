@@ -36,8 +36,10 @@ type RenderingRow = {
   rendering_tenets: { tenets: TenetRow }[];
 };
 
-const RENDERING_SELECT =
+export const RENDERING_SELECT =
   "id,body,language,tradition,status,author_name,created_at,author:profiles(handle,display_name),rendering_tenets(tenets(slug,title,description,support,group))";
+
+export type { RenderingRow };
 
 function authorName(row: { author: ProfileRef; author_name: string | null }): string {
   return row.author?.display_name ?? row.author_name ?? "A contributor";
@@ -54,7 +56,7 @@ function mapTenet(t: TenetRow, resonanceCount = 0): Tenet {
   };
 }
 
-function mapRendering(
+export function mapRendering(
   row: RenderingRow,
   currentRenderingId: string | null,
   resonanceCount: number,
@@ -74,9 +76,9 @@ function mapRendering(
 }
 
 /** Count additive resonances for a set of targets, tallied by target id. */
-async function resonanceCounts(
+export async function resonanceCounts(
   sb: SupabaseClient,
-  targetType: "rendering" | "tenet" | "reflection",
+  targetType: "rendering" | "tenet" | "reflection" | "arrangement",
   ids: string[],
 ): Promise<Map<string, number>> {
   const counts = new Map<string, number>();
