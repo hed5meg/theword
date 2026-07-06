@@ -208,6 +208,20 @@ export interface Note {
   replies: NoteReply[];
 }
 
+// ---- Author annotations (glosses) ------------------------------------------
+// A public gloss the rendering's author places on a word/phrase of their own
+// text, explaining why they chose it. Anchored like a note.
+export interface Annotation {
+  id: string;
+  renderingId: string;
+  quotedText: string;
+  anchorStart: number;
+  anchorEnd: number;
+  contextPrefix: string;
+  contextSuffix: string;
+  note: string;
+}
+
 export interface InboxNote extends Note {
   passageTitle: string;
   passageHref: string;

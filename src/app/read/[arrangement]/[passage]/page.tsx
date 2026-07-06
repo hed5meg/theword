@@ -11,6 +11,7 @@ import { getMyResonatedIds } from "@/lib/resonance";
 import { getReflections } from "@/lib/data/reflections";
 import { getGatheredHistory } from "@/lib/data/gathering";
 import { getNotesByRendering } from "@/lib/data/notes";
+import { getAnnotationsByRendering } from "@/lib/data/annotations";
 import { RenderingArticle } from "@/components/RenderingArticle";
 import { RenderingPicker } from "@/components/RenderingPicker";
 import { Reflections } from "@/components/Reflections";
@@ -84,20 +85,32 @@ export default async function PassagePage({
   const renderingIds = p.renderings
     .map((r) => r.id)
     .filter((id): id is string => Boolean(id));
-  const [profile, resonated, reflections, history, outline, notesByRendering] =
-    await Promise.all([
-      getProfile(),
-      getMyResonatedIds("rendering", renderingIds),
-      p.id ? getReflections("passage", p.id) : Promise.resolve([]),
-      p.id ? getGatheredHistory(p.id) : Promise.resolve([]),
-      getArrangementOutline(arrangement),
-      getNotesByRendering(renderingIds),
-    ]);
+  const [
+    profile,
+    resonated,
+    reflections,
+    history,
+    outline,
+    notesByRendering,
+    annotationsByRendering,
+  ] = await Promise.all([
+    getProfile(),
+    getMyResonatedIds("rendering", renderingIds),
+    p.id ? getReflections("passage", p.id) : Promise.resolve([]),
+    p.id ? getGatheredHistory(p.id) : Promise.resolve([]),
+    getArrangementOutline(arrangement),
+    getNotesByRendering(renderingIds),
+    getAnnotationsByRendering(renderingIds),
+  ]);
   const allTenets = (await getTenets()).map((t) => ({ slug: t.slug, title: t.title }));
   const signedIn = Boolean(profile);
   const isSteward = profile?.role === "steward" || profile?.role === "admin";
   const canManageNotes = (r: { authorHandle?: string }) =>
     isSteward || (Boolean(profile) && profile!.handle === r.authorHandle);
+  // A gloss is the author's own hand, so only the rendering's author may add or
+  // edit one (RLS enforces the same on insert). Stewards moderate elsewhere.
+  const canAnnotate = (r: { authorHandle?: string }) =>
+    Boolean(profile) && profile!.handle === r.authorHandle;
   const offerHref = `/render/${p.slug}?arr=${arrangement}&entry=${passage}`;
 
   // Previous / next within the arrangement — shown right under the reading text.
@@ -277,7 +290,9 @@ export default async function PassagePage({
             path={path}
             showTenetInfo
             notes={selected.id ? notesByRendering.get(selected.id) : undefined}
+            annotations={selected.id ? annotationsByRendering.get(selected.id) : undefined}
             canManageNotes={canManageNotes(selected)}
+            canAnnotate={canAnnotate(selected)}
             allTenets={allTenets}
           />
         </section>

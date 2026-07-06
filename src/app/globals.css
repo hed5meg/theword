@@ -140,6 +140,23 @@ body {
   text-underline-offset: 3px;
 }
 
+/* Author annotation (gloss): a word/phrase the author explains. Gently tinted
+   with a solid gold underline (the translator's own hand), distinct from the
+   dotted, glow-backed reader-note highlight. Hoverable for the explanation. */
+.annotation {
+  background: color-mix(in oklab, var(--color-gold-soft) 14%, transparent);
+  border-radius: 2px;
+  box-shadow: inset 0 -1px 0 0 var(--color-gold-soft);
+  cursor: help;
+  transition: background-color 0.15s ease;
+}
+.annotation:hover,
+.annotation:focus-visible,
+.annotation[data-active="true"] {
+  background: color-mix(in oklab, var(--color-gold-soft) 28%, transparent);
+  outline: none;
+}
+
 /* A larger, airier setting for the promoted Gathered Rendering. */
 .prose-gathered {
   font-size: 1.34rem;

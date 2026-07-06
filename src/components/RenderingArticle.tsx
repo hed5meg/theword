@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { Note, Rendering } from "@/lib/types";
+import type { Annotation, Note, Rendering } from "@/lib/types";
 import { Prose } from "@/components/Prose";
 import { NoteLayer } from "@/components/NoteLayer";
 import { TenetList } from "@/components/TenetList";
@@ -19,7 +19,9 @@ export function RenderingArticle({
   path = "/",
   showTenetInfo = false,
   notes,
+  annotations,
   canManageNotes = false,
+  canAnnotate = false,
   allTenets = [],
 }: {
   rendering: Rendering;
@@ -31,7 +33,11 @@ export function RenderingArticle({
   path?: string;
   showTenetInfo?: boolean;
   notes?: Note[];
+  /** Author glosses to show inline (public). */
+  annotations?: Annotation[];
   canManageNotes?: boolean;
+  /** Viewer authored this rendering (or is a steward): may add glosses. */
+  canAnnotate?: boolean;
   allTenets?: { slug: string; title: string }[];
 }) {
   const isGathered = variant === "gathered";
@@ -64,9 +70,11 @@ export function RenderingArticle({
           renderingId={rendering.id}
           body={rendering.body}
           notes={notes ?? []}
+          annotations={annotations ?? []}
           path={path}
           canCreate={signedIn}
           canManage={canManageNotes}
+          canAnnotate={canAnnotate}
           proseClass={big ? "prose-gathered" : ""}
           allTenets={allTenets}
         />
