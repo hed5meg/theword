@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { notify } from "@/lib/email";
 import { ensureRenderingVersion } from "@/lib/versions";
+import { idemKey, isDuplicate } from "@/lib/idempotency";
 
 export async function createNote(formData: FormData) {
   const path = String(formData.get("path") ?? "/");
@@ -37,8 +38,11 @@ export async function createNote(formData: FormData) {
     context_suffix: String(formData.get("context_suffix") ?? ""),
     body,
     suggested_wording: suggested || null,
+    idempotency_key: idemKey(formData),
   });
   if (error) {
+    // On a repeated submission the first note already landed; return quietly
+    // (no second row, no second notification).
     revalidatePath(path);
     return;
   }
@@ -74,7 +78,16 @@ export async function addNoteReply(formData: FormData) {
     return;
   }
 
-  await sb.from("note_replies").insert({ note_id: noteId, author_id: user.id, body });
+  const { error } = await sb.from("note_replies").insert({
+    note_id: noteId,
+    author_id: user.id,
+    body,
+    idempotency_key: idemKey(formData),
+  });
+  if (isDuplicate(error)) {
+    revalidatePath(path);
+    return;
+  }
 
   // Notify the note's writer and the rendering's author (except the replier).
   const { data: note } = await sb

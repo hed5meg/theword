@@ -6,6 +6,7 @@ import { createServerSupabase } from "@/lib/supabase/server";
 import { notify } from "@/lib/email";
 import { ensureRenderingVersion } from "@/lib/versions";
 import { reAnchor } from "@/lib/anchor";
+import { idemKey } from "@/lib/idempotency";
 
 export async function createRefinement(formData: FormData) {
   const path = String(formData.get("path") ?? "/");
@@ -35,10 +36,13 @@ export async function createRefinement(formData: FormData) {
       base_rendering_version_id: baseVersion,
       proposer_id: user.id,
       reason: reason || null,
+      idempotency_key: idemKey(formData),
     })
     .select("id")
-    .single();
+    .maybeSingle();
   if (error || !rf) {
+    // Duplicate submission (unique-violation) or a real failure — either way,
+    // don't create a second refinement or its child change.
     revalidatePath(path);
     return;
   }
@@ -240,6 +244,7 @@ export async function addRefinementReply(formData: FormData) {
     refinement_id: refinementId,
     author_id: user.id,
     body,
+    idempotency_key: idemKey(formData),
   });
   revalidatePath(path);
 }
@@ -272,9 +277,10 @@ export async function promoteNoteToRefinement(formData: FormData) {
       base_rendering_version_id: baseVersion,
       proposer_id: user.id,
       reason: note.body,
+      idempotency_key: idemKey(formData),
     })
     .select("id")
-    .single();
+    .maybeSingle();
   if (rf) {
     await sb.from("refinement_changes").insert({
       refinement_id: rf.id,

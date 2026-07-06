@@ -16,6 +16,7 @@ import {
   updateAnnotation,
   deleteAnnotation,
 } from "@/lib/actions/annotations";
+import { IdempotencyField } from "@/components/IdempotencyField";
 
 // CSS Custom Highlight API (progressive enhancement; typed loosely as it's new).
 type HighlightCtor = new (...ranges: Range[]) => unknown;
@@ -380,6 +381,7 @@ export function NoteLayer({
             “{anchor.quotedText}”
           </p>
           <form action={createAnnotation} className="ui space-y-3" onSubmit={() => setComposing(null)}>
+            <IdempotencyField />
             <input type="hidden" name="path" value={path} />
             <input type="hidden" name="rendering_id" value={renderingId} />
             <input type="hidden" name="quoted_text" value={anchor.quotedText} />
@@ -411,6 +413,7 @@ export function NoteLayer({
             “{anchor.quotedText}”
           </p>
           <form action={createNote} className="ui space-y-3" onSubmit={() => setComposing(null)}>
+            <IdempotencyField />
             <input type="hidden" name="path" value={path} />
             <input type="hidden" name="rendering_id" value={renderingId} />
             <input type="hidden" name="quoted_text" value={anchor.quotedText} />
@@ -449,6 +452,7 @@ export function NoteLayer({
             “{anchor.quotedText}”
           </p>
           <form action={createRefinement} className="ui space-y-3" onSubmit={() => setComposing(null)}>
+            <IdempotencyField />
             <input type="hidden" name="path" value={path} />
             <input type="hidden" name="rendering_id" value={renderingId} />
             <input type="hidden" name="quoted_text" value={anchor.quotedText} />
@@ -614,6 +618,7 @@ export function NoteLayer({
                 {openNote.suggestedWording}
               </p>
               <form action={promoteNoteToRefinement} className="mt-2">
+                <IdempotencyField />
                 <input type="hidden" name="path" value={path} />
                 <input type="hidden" name="note_id" value={openNote.id} />
                 <button
@@ -641,6 +646,7 @@ export function NoteLayer({
           )}
 
           <form action={addNoteReply} className="ui mt-4 space-y-2">
+            <IdempotencyField />
             <input type="hidden" name="path" value={path} />
             <input type="hidden" name="note_id" value={openNote.id} />
             <textarea

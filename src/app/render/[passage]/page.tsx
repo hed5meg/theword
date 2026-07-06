@@ -4,6 +4,8 @@ import { notFound, redirect } from "next/navigation";
 import { getPassageRef } from "@/lib/data/passage-ref";
 import { getTenets } from "@/lib/data";
 import { getUser } from "@/lib/auth";
+import { IdempotencyField } from "@/components/IdempotencyField";
+import { SubmitButton } from "@/components/SubmitButton";
 import { createRendering } from "./actions";
 
 export const dynamic = "force-dynamic";
@@ -61,6 +63,7 @@ export default async function RenderPage({
       )}
 
       <form action={createRendering} className="ui mt-8 space-y-6">
+        <IdempotencyField />
         <input type="hidden" name="passage_id" value={passage.id} />
         <input type="hidden" name="passage_slug" value={passage.slug} />
         <input type="hidden" name="back_arr" value={backArr} />
@@ -141,12 +144,12 @@ export default async function RenderPage({
         </fieldset>
 
         <div className="flex items-center gap-3">
-          <button
-            type="submit"
+          <SubmitButton
+            pendingLabel="Offering…"
             className="rounded-full bg-ink px-7 py-3 text-sm font-medium text-parchment transition-opacity hover:opacity-90"
           >
             Offer this branch
-          </button>
+          </SubmitButton>
           <Link
             href={backTo}
             className="text-sm text-ink-faint transition-colors hover:text-ink-soft"

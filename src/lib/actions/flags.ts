@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createServerSupabase } from "@/lib/supabase/server";
+import { idemKey } from "@/lib/idempotency";
 
 /** Any signed-in member may flag an item for a steward's gentle attention. */
 export async function createFlag(formData: FormData) {
@@ -22,6 +23,7 @@ export async function createFlag(formData: FormData) {
     target_type: targetType,
     target_id: targetId,
     reason: reason || null,
+    idempotency_key: idemKey(formData),
   });
 
   revalidatePath(path);

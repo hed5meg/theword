@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createServerSupabase } from "@/lib/supabase/server";
+import { idemKey } from "@/lib/idempotency";
 
 // Author annotations: the one who offered a rendering glosses a word/phrase of
 // their own text. RLS enforces that only the rendering's author (or a steward)
@@ -35,6 +36,7 @@ export async function createAnnotation(formData: FormData) {
     context_prefix: String(formData.get("context_prefix") ?? ""),
     context_suffix: String(formData.get("context_suffix") ?? ""),
     note,
+    idempotency_key: idemKey(formData),
   });
 
   revalidatePath(path);

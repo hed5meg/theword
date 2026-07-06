@@ -1,5 +1,6 @@
 import type { FlagTarget } from "@/lib/types";
 import { createFlag } from "@/lib/actions/flags";
+import { IdempotencyField } from "@/components/IdempotencyField";
 
 /**
  * A quiet "flag for a steward" disclosure. Shown only to signed-in members so
@@ -23,6 +24,7 @@ export function FlagControl({
         Flag for a steward
       </summary>
       <form action={createFlag} className="mt-2 flex flex-col gap-2 sm:flex-row">
+        <IdempotencyField />
         <input type="hidden" name="target_type" value={targetType} />
         <input type="hidden" name="target_id" value={targetId} />
         <input type="hidden" name="path" value={path} />

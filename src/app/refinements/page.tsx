@@ -9,6 +9,7 @@ import {
   withdrawRefinement,
   addRefinementReply,
 } from "@/lib/actions/refinements";
+import { IdempotencyField } from "@/components/IdempotencyField";
 
 export const dynamic = "force-dynamic";
 
@@ -152,6 +153,7 @@ export default async function RefinementsPage() {
 
               <div className="ui mt-4 flex flex-wrap items-end gap-3 border-t border-line/70 pt-3">
                 <form action={addRefinementReply} className="flex flex-1 items-end gap-2">
+                  <IdempotencyField />
                   <input type="hidden" name="refinement_id" value={rf.id} />
                   <input type="hidden" name="path" value={path} />
                   <input

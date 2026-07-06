@@ -3,6 +3,7 @@ import type { ReflectionTarget } from "@/lib/types";
 import type { ReflectionNode } from "@/lib/data/reflections";
 import { addReflection } from "@/lib/actions/reflections";
 import { FlagControl } from "@/components/FlagControl";
+import { IdempotencyField } from "@/components/IdempotencyField";
 
 function formatDate(iso: string): string {
   try {
@@ -33,6 +34,7 @@ function ReflectionForm({
 }) {
   return (
     <form action={addReflection} className="ui space-y-3">
+      <IdempotencyField />
       <input type="hidden" name="target_type" value={targetType} />
       <input type="hidden" name="target_id" value={targetId} />
       <input type="hidden" name="path" value={path} />

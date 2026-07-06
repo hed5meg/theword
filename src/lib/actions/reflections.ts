@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createServerSupabase } from "@/lib/supabase/server";
+import { idemKey } from "@/lib/idempotency";
 
 export async function addReflection(formData: FormData) {
   const targetType = String(formData.get("target_type") ?? "");
@@ -28,6 +29,7 @@ export async function addReflection(formData: FormData) {
     target_id: targetId,
     parent_id: parentId || null,
     body,
+    idempotency_key: idemKey(formData),
   });
 
   revalidatePath(path);

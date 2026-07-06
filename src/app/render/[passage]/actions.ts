@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createServerSupabase } from "@/lib/supabase/server";
+import { idemKey, isDuplicate } from "@/lib/idempotency";
 
 export async function createRendering(formData: FormData) {
   const sb = await createServerSupabase();
@@ -37,11 +38,18 @@ export async function createRendering(formData: FormData) {
       language,
       tradition: tradition || null,
       status: "submitted",
+      idempotency_key: idemKey(formData),
     })
     .select("id")
-    .single();
+    .maybeSingle();
 
-  if (error || !rendering) {
+  if (error) {
+    // A repeated submission (double-click / retry) — the first one already
+    // created the branch. Send the author to the passage, not a second copy.
+    if (isDuplicate(error)) redirect(backTo);
+    redirect(`/render/${passageSlug}?error=save`);
+  }
+  if (!rendering) {
     redirect(`/render/${passageSlug}?error=save`);
   }
 
