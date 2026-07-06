@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { getPassageRef } from "@/lib/data/passage-ref";
 import { getTenets } from "@/lib/data";
+import { getBranchesByAuthor } from "@/lib/data/branches";
 import { getUser } from "@/lib/auth";
 import { IdempotencyField } from "@/components/IdempotencyField";
 import { SubmitButton } from "@/components/SubmitButton";
@@ -26,8 +27,9 @@ export default async function RenderPage({
   const user = await getUser();
   if (!user) redirect(`/signin?next=/render/${passageSlug}`);
 
-  const [tenets, { error, arr, entry }] = await Promise.all([
+  const [tenets, myBranches, { error, arr, entry }] = await Promise.all([
     getTenets(),
+    getBranchesByAuthor(user.id),
     searchParams,
   ]);
   const backArr = arr || "the-love-ordered-arrangement";
@@ -89,6 +91,32 @@ export default async function RenderPage({
             className="mt-1.5 w-full rounded-xl border border-line bg-card px-4 py-3 font-serif text-lg leading-relaxed text-ink outline-none focus:border-gold-soft"
           />
           <p className="mt-1 text-xs text-ink-faint">Markdown is welcome.</p>
+        </div>
+
+        <div>
+          <label htmlFor="branch_name" className="block text-sm text-ink-soft">
+            Name this branch <span className="text-ink-faint">(optional)</span>
+          </label>
+          <input
+            id="branch_name"
+            name="branch_name"
+            list="my-branches"
+            placeholder="e.g. Love Anchored"
+            autoComplete="off"
+            className="mt-1.5 w-full rounded-xl border border-line bg-card px-4 py-3 text-ink outline-none focus:border-gold-soft"
+          />
+          {myBranches.length > 0 && (
+            <datalist id="my-branches">
+              {myBranches.map((b) => (
+                <option key={b.slug} value={b.name} />
+              ))}
+            </datalist>
+          )}
+          <p className="mt-1 text-xs text-ink-faint">
+            Give a branch a name to gather your renderings across passages under it
+            — reuse the same name wherever it belongs. Left blank, it&rsquo;s shown
+            under your name.
+          </p>
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">

@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getProfileByHandle, getMemberRenderings } from "@/lib/data/members";
+import { getBranchesByAuthor } from "@/lib/data/branches";
 import { getProfile } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
@@ -29,8 +30,9 @@ export default async function MemberPage({
   const profile = await getProfileByHandle(handle);
   if (!profile) notFound();
 
-  const [renderings, viewer] = await Promise.all([
+  const [renderings, branches, viewer] = await Promise.all([
     getMemberRenderings(profile.id),
+    getBranchesByAuthor(profile.id),
     getProfile(),
   ]);
   const isSelf = viewer?.id === profile.id;
@@ -83,6 +85,29 @@ export default async function MemberPage({
         </dl>
       )}
 
+      {branches.length > 0 && (
+        <section className="mt-12">
+          <h2 className="font-serif text-2xl text-ink">
+            {isSelf ? "Your" : "Their"} named branches
+          </h2>
+          <ul className="mt-5 flex flex-wrap gap-2.5">
+            {branches.map((b) => (
+              <li key={b.slug}>
+                <Link
+                  href={`/branches/${profile.handle}/${b.slug}`}
+                  className="ui inline-flex items-baseline gap-2 rounded-full border border-gold-soft/50 bg-glow/40 px-4 py-1.5 text-sm text-gold transition-colors hover:bg-glow"
+                >
+                  {b.name}
+                  <span className="text-xs text-ink-faint">
+                    {b.passageCount}
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
       <section className="mt-12">
         <h2 className="font-serif text-2xl text-ink">
           {isSelf ? "Your" : "Their"} branches of the book
@@ -99,6 +124,9 @@ export default async function MemberPage({
                     <span className="font-serif text-lg text-ink">{r.passageTitle}</span>
                     <span className="ui text-xs uppercase tracking-wider text-ink-faint">
                       {r.canonicalRef}
+                      {r.branchName && (
+                        <span className="text-gold"> · {r.branchName}</span>
+                      )}
                     </span>
                   </span>
                   {r.isGathered && (

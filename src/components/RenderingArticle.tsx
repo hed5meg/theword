@@ -45,23 +45,34 @@ export function RenderingArticle({
 
   return (
     <article className={big ? "" : "rounded-2xl border border-line bg-card/50 p-6 sm:p-8"}>
-      {/* The branch is named by the picker above; show attribution only for
-          community branches (the seed needs none). */}
+      {/* Attribution for community branches (the seed needs none). A named branch
+          leads with its name, linked to the whole branch; the contributor is
+          credited beside it. */}
       {rendering.authorHandle && (
-        <header className="ui mb-5 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-ink-faint">
-          <span>by</span>
-          <Link
-            href={`/members/${rendering.authorHandle}`}
-            className="text-ink-soft transition-colors hover:text-ink"
-          >
-            {rendering.author}
-          </Link>
-          {rendering.tradition && (
-            <>
-              <span aria-hidden>·</span>
-              <span>{rendering.tradition}</span>
-            </>
+        <header className="ui mb-5 text-sm text-ink-faint">
+          {rendering.branchName && rendering.branchSlug && (
+            <Link
+              href={`/branches/${rendering.authorHandle}/${rendering.branchSlug}`}
+              className="mb-0.5 block font-serif text-lg not-italic text-gold transition-colors hover:text-ink"
+            >
+              {rendering.branchName}
+            </Link>
           )}
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+            <span>by</span>
+            <Link
+              href={`/members/${rendering.authorHandle}`}
+              className="text-ink-soft transition-colors hover:text-ink"
+            >
+              {rendering.author}
+            </Link>
+            {rendering.tradition && (
+              <>
+                <span aria-hidden>·</span>
+                <span>{rendering.tradition}</span>
+              </>
+            )}
+          </div>
         </header>
       )}
 

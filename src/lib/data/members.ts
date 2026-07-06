@@ -40,6 +40,7 @@ export interface MemberRendering {
   canonicalRef: string;
   passageSlug: string;
   isGathered: boolean;
+  branchName?: string;
 }
 
 /** A member's renderings, as their personal rendering of the book. */
@@ -53,7 +54,7 @@ export async function getMemberRenderings(
   const { data, error } = await sb
     .from("renderings")
     .select(
-      "id,status,passages!renderings_passage_id_fkey!inner(slug,title,canonical_ref,order_index,current_rendering_id)",
+      "id,status,branch:branches(name),passages!renderings_passage_id_fkey!inner(slug,title,canonical_ref,order_index,current_rendering_id)",
     )
     .eq("author_id", profileId)
     .neq("status", "draft");
@@ -61,6 +62,7 @@ export async function getMemberRenderings(
 
   type Row = {
     id: string;
+    branch: { name: string } | null;
     passages: {
       slug: string;
       title: string;
@@ -77,5 +79,6 @@ export async function getMemberRenderings(
       canonicalRef: r.passages.canonical_ref,
       passageSlug: r.passages.slug,
       isGathered: r.id === r.passages.current_rendering_id,
+      branchName: r.branch?.name,
     }));
 }

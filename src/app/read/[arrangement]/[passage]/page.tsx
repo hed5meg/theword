@@ -69,7 +69,7 @@ export default async function PassagePage({
   // Pick which rendering to read (default the gathered one). One at a time.
   const renderingOptions = p.renderings.map((r) => ({
     key: r.isGathered ? "gathered" : (r.id ?? ""),
-    label: r.author,
+    label: r.branchName ?? r.author,
   }));
   const selectedKey =
     typeof renderingParam === "string" &&
@@ -162,7 +162,7 @@ export default async function PassagePage({
   for (const r of p.renderings) {
     compareTexts.push({
       key: r.isGathered ? "gathered" : (r.id ?? ""),
-      label: r.author,
+      label: r.branchName ?? r.author,
       kind: "rendering",
       body: r.body,
       language: r.language,

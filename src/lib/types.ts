@@ -46,6 +46,9 @@ export interface Rendering {
   language: string;
   /** Optional tradition the rendering is offered from. */
   tradition?: string;
+  /** The named branch this rendering belongs to (stands in for the alias). */
+  branchName?: string;
+  branchSlug?: string;
   status: RenderingStatus;
   /** The tenets this rendering says it filtered through. */
   tenets: Tenet[];

@@ -33,11 +33,12 @@ type RenderingRow = {
   author_name: string | null;
   created_at: string;
   author: ProfileRef;
+  branch: { name: string; slug: string } | null;
   rendering_tenets: { tenets: TenetRow }[];
 };
 
 export const RENDERING_SELECT =
-  "id,body,language,tradition,status,author_name,created_at,author:profiles(handle,display_name),rendering_tenets(tenets(slug,title,description,support,group))";
+  "id,body,language,tradition,status,author_name,created_at,author:profiles(handle,display_name),branch:branches(name,slug),rendering_tenets(tenets(slug,title,description,support,group))";
 
 export type { RenderingRow };
 
@@ -68,6 +69,8 @@ export function mapRendering(
     authorHandle: row.author?.handle,
     language: row.language,
     tradition: row.tradition ?? undefined,
+    branchName: row.branch?.name,
+    branchSlug: row.branch?.slug,
     status: row.status,
     tenets: (row.rendering_tenets ?? []).map((rt) => mapTenet(rt.tenets)),
     resonanceCount,
