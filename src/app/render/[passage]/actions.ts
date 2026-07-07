@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { idemKey, isDuplicate } from "@/lib/idempotency";
+import { ensureRenderingVersion } from "@/lib/versions";
 import { slugify } from "@/lib/content/parse";
 
 type SB = Awaited<ReturnType<typeof createServerSupabase>>;
@@ -96,17 +97,90 @@ export async function createRendering(formData: FormData) {
     redirect(`/render/${passageSlug}?error=save`);
   }
 
-  if (tenetSlugs.length > 0) {
-    const { data: tenetRows } = await sb
-      .from("tenets")
-      .select("id,slug")
-      .in("slug", tenetSlugs);
-    const links = (tenetRows ?? []).map((t) => ({
-      rendering_id: rendering!.id,
-      tenet_id: t.id,
-    }));
-    if (links.length > 0) await sb.from("rendering_tenets").insert(links);
+  await linkTenets(sb, rendering!.id, tenetSlugs);
+
+  revalidatePath(backTo);
+  redirect(backTo);
+}
+
+/** Replace a rendering's principle links with the given set. */
+async function linkTenets(sb: SB, renderingId: string, tenetSlugs: string[]) {
+  if (tenetSlugs.length === 0) return;
+  const { data: tenetRows } = await sb
+    .from("tenets")
+    .select("id,slug")
+    .in("slug", tenetSlugs);
+  const links = (tenetRows ?? []).map((t) => ({
+    rendering_id: renderingId,
+    tenet_id: t.id,
+  }));
+  if (links.length > 0) await sb.from("rendering_tenets").insert(links);
+}
+
+/**
+ * Edit one's own rendering. The prior text is preserved in version history, so
+ * nothing is lost; notes, glosses, and refinements re-anchor to the new text (or
+ * gently orphan). Only the rendering's author may edit — a steward reshapes
+ * through gathering, not by overwriting another's hand.
+ */
+export async function updateRendering(formData: FormData) {
+  const sb = await createServerSupabase();
+  const {
+    data: { user },
+  } = await sb.auth.getUser();
+
+  const id = String(formData.get("rendering_id") ?? "");
+  const passageSlug = String(formData.get("passage_slug") ?? "");
+  const backArr = String(formData.get("back_arr") ?? "the-love-ordered-arrangement");
+  const backEntry = String(formData.get("back_entry") ?? passageSlug);
+  const backTo = `/read/${backArr}/${backEntry}`;
+  const editUrl = `/render/${passageSlug}?edit=${id}&arr=${backArr}&entry=${backEntry}`;
+
+  if (!user) redirect(`/signin?next=${encodeURIComponent(editUrl)}`);
+
+  const body = String(formData.get("body") ?? "").trim();
+  const language = String(formData.get("language") ?? "").trim() || "English";
+  const tradition = String(formData.get("tradition") ?? "").trim();
+  const tenetSlugs = formData.getAll("tenets").map(String).filter(Boolean);
+  const branchName = String(formData.get("branch_name") ?? "");
+
+  if (!id || !body) redirect(`${editUrl}&error=required`);
+
+  // Ownership: only the author may edit (RLS also enforces this).
+  const { data: current } = await sb
+    .from("renderings")
+    .select("id,author_id,body")
+    .eq("id", id)
+    .maybeSingle();
+  if (!current || current.author_id !== user.id) redirect(backTo);
+
+  // Preserve the prior text: ensure a baseline, then snapshot this edit.
+  await ensureRenderingVersion(sb, id);
+  if (body !== current.body) {
+    await sb.from("rendering_versions").insert({
+      rendering_id: id,
+      body,
+      edited_by: user.id,
+      note: "Edited by the author",
+    });
   }
+
+  const branchId = await resolveBranchId(sb, user.id, branchName);
+  const { error } = await sb
+    .from("renderings")
+    .update({
+      body,
+      language,
+      tradition: tradition || null,
+      branch_id: branchId,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", id);
+  if (error) redirect(`${editUrl}&error=save`);
+
+  // Replace principle links with the submitted set.
+  await sb.from("rendering_tenets").delete().eq("rendering_id", id);
+  await linkTenets(sb, id, tenetSlugs);
 
   revalidatePath(backTo);
   redirect(backTo);

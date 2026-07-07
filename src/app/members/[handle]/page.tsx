@@ -37,6 +37,30 @@ export default async function MemberPage({
   ]);
   const isSelf = viewer?.id === profile.id;
 
+  // Group each rendering under its named branch (ordered by the branch list),
+  // with any unnamed renderings gathered at the end.
+  const byBranch = new Map<string, typeof renderings>();
+  const ungrouped: typeof renderings = [];
+  for (const r of renderings) {
+    if (r.branchSlug) {
+      const list = byBranch.get(r.branchSlug) ?? [];
+      list.push(r);
+      byBranch.set(r.branchSlug, list);
+    } else {
+      ungrouped.push(r);
+    }
+  }
+  const groups: {
+    name: string | null;
+    slug: string | null;
+    entries: typeof renderings;
+  }[] = [];
+  for (const b of branches) {
+    const entries = byBranch.get(b.slug);
+    if (entries && entries.length) groups.push({ name: b.name, slug: b.slug, entries });
+  }
+  if (ungrouped.length) groups.push({ name: null, slug: null, entries: ungrouped });
+
   return (
     <div className="mx-auto max-w-2xl px-5 py-14 sm:px-8">
       <header>
@@ -85,59 +109,56 @@ export default async function MemberPage({
         </dl>
       )}
 
-      {branches.length > 0 && (
-        <section className="mt-12">
-          <h2 className="font-serif text-2xl text-ink">
-            {isSelf ? "Your" : "Their"} named branches
-          </h2>
-          <ul className="mt-5 flex flex-wrap gap-2.5">
-            {branches.map((b) => (
-              <li key={b.slug}>
-                <Link
-                  href={`/branches/${profile.handle}/${b.slug}`}
-                  className="ui inline-flex items-baseline gap-2 rounded-full border border-gold-soft/50 bg-glow/40 px-4 py-1.5 text-sm text-gold transition-colors hover:bg-glow"
-                >
-                  {b.name}
-                  <span className="text-xs text-ink-faint">
-                    {b.passageCount}
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
-
       <section className="mt-12">
         <h2 className="font-serif text-2xl text-ink">
           {isSelf ? "Your" : "Their"} branches of the book
         </h2>
-        {renderings.length > 0 ? (
-          <ul className="mt-5 divide-y divide-line/70 overflow-hidden rounded-2xl border border-line bg-card/50">
-            {renderings.map((r) => (
-              <li key={r.passageSlug}>
-                <Link
-                  href={`/read/the-canonical-order/${r.passageSlug}`}
-                  className="flex items-baseline justify-between gap-4 px-5 py-4 transition-colors hover:bg-glow/50"
-                >
-                  <span className="flex flex-col">
-                    <span className="font-serif text-lg text-ink">{r.passageTitle}</span>
-                    <span className="ui text-xs uppercase tracking-wider text-ink-faint">
-                      {r.canonicalRef}
-                      {r.branchName && (
-                        <span className="text-gold"> · {r.branchName}</span>
-                      )}
-                    </span>
-                  </span>
-                  {r.isGathered && (
-                    <span className="ui shrink-0 rounded-full bg-glow px-2.5 py-1 text-xs text-gold">
-                      Gathered
-                    </span>
+        {groups.length > 0 ? (
+          <div className="mt-5 space-y-8">
+            {groups.map((g) => (
+              <div key={g.slug ?? "_ungrouped"}>
+                <div className="mb-2.5">
+                  {g.slug ? (
+                    <Link
+                      href={`/branches/${profile.handle}/${g.slug}`}
+                      className="ui inline-flex items-baseline gap-2 font-serif text-lg text-gold transition-colors hover:text-ink"
+                    >
+                      {g.name}
+                      <span className="text-xs text-ink-faint">
+                        {g.entries.length} →
+                      </span>
+                    </Link>
+                  ) : (
+                    <h3 className="ui font-serif text-lg text-ink-soft">
+                      Not in a branch
+                    </h3>
                   )}
-                </Link>
-              </li>
+                </div>
+                <ul className="divide-y divide-line/70 overflow-hidden rounded-2xl border border-line bg-card/50">
+                  {g.entries.map((r) => (
+                    <li key={r.renderingId}>
+                      <Link
+                        href={`/read/the-canonical-order/${r.passageSlug}?rendering=${r.renderingId}`}
+                        className="flex items-baseline justify-between gap-4 px-5 py-4 transition-colors hover:bg-glow/50"
+                      >
+                        <span className="flex flex-col">
+                          <span className="font-serif text-lg text-ink">{r.passageTitle}</span>
+                          <span className="ui text-xs uppercase tracking-wider text-ink-faint">
+                            {r.canonicalRef}
+                          </span>
+                        </span>
+                        {r.isGathered && (
+                          <span className="ui shrink-0 rounded-full bg-glow px-2.5 py-1 text-xs text-gold">
+                            Gathered
+                          </span>
+                        )}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             ))}
-          </ul>
+          </div>
         ) : (
           <p className="mt-5 rounded-2xl border border-dashed border-line bg-card/40 p-6 text-ink-soft">
             {isSelf

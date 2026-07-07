@@ -5,20 +5,35 @@ import { getPassageRef } from "@/lib/data/passage-ref";
 import { getTenets } from "@/lib/data";
 import { getBranchesByAuthor } from "@/lib/data/branches";
 import { getUser } from "@/lib/auth";
+import { createServerSupabase } from "@/lib/supabase/server";
 import { IdempotencyField } from "@/components/IdempotencyField";
 import { SubmitButton } from "@/components/SubmitButton";
-import { createRendering } from "./actions";
+import { createRendering, updateRendering } from "./actions";
 
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = { title: "Offer a branch" };
+
+interface Editing {
+  id: string;
+  body: string;
+  language: string;
+  tradition: string;
+  branchName: string;
+  tenetSlugs: Set<string>;
+}
 
 export default async function RenderPage({
   params,
   searchParams,
 }: {
   params: Promise<{ passage: string }>;
-  searchParams: Promise<{ error?: string; arr?: string; entry?: string }>;
+  searchParams: Promise<{
+    error?: string;
+    arr?: string;
+    entry?: string;
+    edit?: string;
+  }>;
 }) {
   const { passage: passageSlug } = await params;
   const passage = await getPassageRef(passageSlug);
@@ -27,7 +42,7 @@ export default async function RenderPage({
   const user = await getUser();
   if (!user) redirect(`/signin?next=/render/${passageSlug}`);
 
-  const [tenets, myBranches, { error, arr, entry }] = await Promise.all([
+  const [tenets, myBranches, { error, arr, entry, edit }] = await Promise.all([
     getTenets(),
     getBranchesByAuthor(user.id),
     searchParams,
@@ -35,6 +50,42 @@ export default async function RenderPage({
   const backArr = arr || "the-love-ordered-arrangement";
   const backEntry = entry || passage.slug;
   const backTo = `/read/${backArr}/${backEntry}`;
+
+  // Edit mode: load one's own rendering to pre-fill. Only the author may edit.
+  let editing: Editing | null = null;
+  if (edit) {
+    const sb = await createServerSupabase();
+    const { data } = await sb
+      .from("renderings")
+      .select(
+        "id,author_id,body,language,tradition,branch:branches(name),rendering_tenets(tenets(slug))",
+      )
+      .eq("id", edit)
+      .maybeSingle();
+    type EditRow = {
+      id: string;
+      author_id: string;
+      body: string;
+      language: string;
+      tradition: string | null;
+      branch: { name: string } | null;
+      rendering_tenets: { tenets: { slug: string } | null }[];
+    };
+    const row = data as unknown as EditRow | null;
+    if (!row || row.author_id !== user.id) redirect(backTo);
+    editing = {
+      id: row.id,
+      body: row.body,
+      language: row.language,
+      tradition: row.tradition ?? "",
+      branchName: row.branch?.name ?? "",
+      tenetSlugs: new Set(
+        (row.rendering_tenets ?? [])
+          .map((rt) => rt.tenets?.slug)
+          .filter((s): s is string => Boolean(s)),
+      ),
+    };
+  }
 
   return (
     <div className="mx-auto max-w-2xl px-5 py-12 sm:px-8">
@@ -45,13 +96,16 @@ export default async function RenderPage({
       </nav>
 
       <header className="border-b border-line/70 pb-6">
-        <p className="eyebrow">Offer a branch · {passage.canonicalRef}</p>
+        <p className="eyebrow">
+          {editing ? "Edit your branch" : "Offer a branch"} · {passage.canonicalRef}
+        </p>
         <h1 className="mt-3 font-serif text-3xl tracking-tight text-ink">
           {passage.title}
         </h1>
         <p className="mt-2 text-ink-soft">
-          Write this passage in your own plain, pure words. It will sit beside the
-          others, held gently — never ranked.
+          {editing
+            ? "Refine your words. The previous version is kept in history, and nothing is lost."
+            : "Write this passage in your own plain, pure words. It will sit beside the others, held gently — never ranked."}
         </p>
       </header>
 
@@ -64,15 +118,21 @@ export default async function RenderPage({
         </details>
       )}
 
-      <form action={createRendering} className="ui mt-8 space-y-6">
+      <form
+        action={editing ? updateRendering : createRendering}
+        className="ui mt-8 space-y-6"
+      >
         <IdempotencyField />
         <input type="hidden" name="passage_id" value={passage.id} />
         <input type="hidden" name="passage_slug" value={passage.slug} />
         <input type="hidden" name="back_arr" value={backArr} />
         <input type="hidden" name="back_entry" value={backEntry} />
+        {editing && <input type="hidden" name="rendering_id" value={editing.id} />}
 
         {error === "required" && (
-          <p className="text-sm text-red-700">Please write a branch before offering it.</p>
+          <p className="text-sm text-red-700">
+            Please write a branch before {editing ? "saving" : "offering"} it.
+          </p>
         )}
         {error === "save" && (
           <p className="text-sm text-red-700">Something went wrong. Please try again.</p>
@@ -87,6 +147,7 @@ export default async function RenderPage({
             name="body"
             required
             rows={12}
+            defaultValue={editing?.body}
             placeholder="Tell this passage as plainly and as lovingly as you can…"
             className="mt-1.5 w-full rounded-xl border border-line bg-card px-4 py-3 font-serif text-lg leading-relaxed text-ink outline-none focus:border-gold-soft"
           />
@@ -101,6 +162,7 @@ export default async function RenderPage({
             id="branch_name"
             name="branch_name"
             list="my-branches"
+            defaultValue={editing?.branchName}
             placeholder="e.g. Love Anchored"
             autoComplete="off"
             className="mt-1.5 w-full rounded-xl border border-line bg-card px-4 py-3 text-ink outline-none focus:border-gold-soft"
@@ -127,7 +189,7 @@ export default async function RenderPage({
             <input
               id="language"
               name="language"
-              defaultValue="English"
+              defaultValue={editing?.language ?? "English"}
               className="mt-1.5 w-full rounded-xl border border-line bg-card px-4 py-3 text-ink outline-none focus:border-gold-soft"
             />
           </div>
@@ -138,6 +200,7 @@ export default async function RenderPage({
             <input
               id="tradition"
               name="tradition"
+              defaultValue={editing?.tradition}
               placeholder="The wisdom you bring"
               className="mt-1.5 w-full rounded-xl border border-line bg-card px-4 py-3 text-ink outline-none focus:border-gold-soft"
             />
@@ -156,6 +219,7 @@ export default async function RenderPage({
                   type="checkbox"
                   name="tenets"
                   value={t.slug}
+                  defaultChecked={editing?.tenetSlugs.has(t.slug)}
                   className="mt-1 accent-[var(--color-gold)]"
                 />
                 <span>{t.title}</span>
@@ -173,10 +237,10 @@ export default async function RenderPage({
 
         <div className="flex items-center gap-3">
           <SubmitButton
-            pendingLabel="Offering…"
+            pendingLabel={editing ? "Saving…" : "Offering…"}
             className="rounded-full bg-ink px-7 py-3 text-sm font-medium text-parchment transition-opacity hover:opacity-90"
           >
-            Offer this branch
+            {editing ? "Save changes" : "Offer this branch"}
           </SubmitButton>
           <Link
             href={backTo}

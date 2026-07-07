@@ -293,6 +293,11 @@ export default async function PassagePage({
             annotations={selected.id ? annotationsByRendering.get(selected.id) : undefined}
             canManageNotes={canManageNotes(selected)}
             canAnnotate={canAnnotate(selected)}
+            editHref={
+              canAnnotate(selected) && selected.id
+                ? `/render/${p.slug}?edit=${selected.id}&arr=${arrangement}&entry=${passage}`
+                : undefined
+            }
             allTenets={allTenets}
           />
         </section>

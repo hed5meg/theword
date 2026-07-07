@@ -22,6 +22,7 @@ export function RenderingArticle({
   annotations,
   canManageNotes = false,
   canAnnotate = false,
+  editHref,
   allTenets = [],
 }: {
   rendering: Rendering;
@@ -38,6 +39,8 @@ export function RenderingArticle({
   canManageNotes?: boolean;
   /** Viewer authored this rendering (or is a steward): may add glosses. */
   canAnnotate?: boolean;
+  /** When the viewer may edit this rendering, a link to its edit form. */
+  editHref?: string;
   allTenets?: { slug: string; title: string }[];
 }) {
   const isGathered = variant === "gathered";
@@ -108,12 +111,22 @@ export function RenderingArticle({
               path={path}
               noun="this rendering"
             />
-            <FlagControl
-              targetType="rendering"
-              targetId={rendering.id}
-              path={path}
-              signedIn={signedIn}
-            />
+            <div className="flex items-center gap-4">
+              {editHref && (
+                <Link
+                  href={editHref}
+                  className="ui text-xs text-ink-faint transition-colors hover:text-gold"
+                >
+                  Edit
+                </Link>
+              )}
+              <FlagControl
+                targetType="rendering"
+                targetId={rendering.id}
+                path={path}
+                signedIn={signedIn}
+              />
+            </div>
           </div>
         )}
       </footer>

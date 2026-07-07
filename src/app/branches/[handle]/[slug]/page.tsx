@@ -2,6 +2,10 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getBranch } from "@/lib/data/branches";
+import { getProfile } from "@/lib/auth";
+import { renameBranch } from "@/lib/actions/branches";
+import { IdempotencyField } from "@/components/IdempotencyField";
+import { SubmitButton } from "@/components/SubmitButton";
 
 export const dynamic = "force-dynamic";
 
@@ -25,10 +29,12 @@ export default async function BranchPage({
   params: Promise<{ handle: string; slug: string }>;
 }) {
   const { handle, slug } = await params;
-  const branch = await getBranch(handle, slug);
+  const [branch, viewer] = await Promise.all([getBranch(handle, slug), getProfile()]);
   if (!branch) notFound();
 
   const count = branch.entries.length;
+  const isOwner = viewer?.handle === branch.authorHandle;
+  const path = `/branches/${branch.authorHandle}/${branch.slug}`;
 
   return (
     <div className="mx-auto max-w-2xl px-5 py-14 sm:px-8">
@@ -60,6 +66,53 @@ export default async function BranchPage({
           <p className="mt-6 font-serif text-lg italic leading-relaxed text-ink-soft">
             {branch.description}
           </p>
+        )}
+
+        {isOwner && (
+          <details className="ui group mt-6">
+            <summary className="cursor-pointer list-none text-sm text-gold transition-colors hover:text-ink">
+              Rename this branch
+            </summary>
+            <form action={renameBranch} className="mt-4 space-y-3">
+              <IdempotencyField />
+              <input type="hidden" name="branch_slug" value={branch.slug} />
+              <input type="hidden" name="path" value={path} />
+              <div>
+                <label htmlFor="name" className="block text-xs text-ink-soft">
+                  Name
+                </label>
+                <input
+                  id="name"
+                  name="name"
+                  required
+                  defaultValue={branch.name}
+                  className="mt-1 w-full rounded-xl border border-line bg-card px-3 py-2 text-ink outline-none focus:border-gold-soft"
+                />
+              </div>
+              <div>
+                <label htmlFor="description" className="block text-xs text-ink-soft">
+                  Description <span className="text-ink-faint">(optional)</span>
+                </label>
+                <textarea
+                  id="description"
+                  name="description"
+                  rows={2}
+                  defaultValue={branch.description}
+                  placeholder="What this branch reads for…"
+                  className="mt-1 w-full rounded-xl border border-line bg-card px-3 py-2 text-ink outline-none focus:border-gold-soft"
+                />
+              </div>
+              <p className="text-xs text-ink-faint">
+                The link stays the same when you rename — only the name changes.
+              </p>
+              <SubmitButton
+                pendingLabel="Saving…"
+                className="rounded-full bg-ink px-5 py-2 text-sm font-medium text-parchment hover:opacity-90"
+              >
+                Save
+              </SubmitButton>
+            </form>
+          </details>
         )}
       </header>
 

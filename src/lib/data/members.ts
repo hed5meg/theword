@@ -36,11 +36,13 @@ export async function getProfileByHandle(handle: string): Promise<Profile | null
 }
 
 export interface MemberRendering {
+  renderingId: string;
   passageTitle: string;
   canonicalRef: string;
   passageSlug: string;
   isGathered: boolean;
   branchName?: string;
+  branchSlug?: string;
 }
 
 /** A member's renderings, as their personal rendering of the book. */
@@ -54,7 +56,7 @@ export async function getMemberRenderings(
   const { data, error } = await sb
     .from("renderings")
     .select(
-      "id,status,branch:branches(name),passages!renderings_passage_id_fkey!inner(slug,title,canonical_ref,order_index,current_rendering_id)",
+      "id,status,branch:branches(name,slug),passages!renderings_passage_id_fkey!inner(slug,title,canonical_ref,order_index,current_rendering_id)",
     )
     .eq("author_id", profileId)
     .neq("status", "draft");
@@ -62,7 +64,7 @@ export async function getMemberRenderings(
 
   type Row = {
     id: string;
-    branch: { name: string } | null;
+    branch: { name: string; slug: string } | null;
     passages: {
       slug: string;
       title: string;
@@ -75,10 +77,12 @@ export async function getMemberRenderings(
   return (data as unknown as Row[])
     .sort((a, b) => a.passages.order_index - b.passages.order_index)
     .map((r) => ({
+      renderingId: r.id,
       passageTitle: r.passages.title,
       canonicalRef: r.passages.canonical_ref,
       passageSlug: r.passages.slug,
       isGathered: r.id === r.passages.current_rendering_id,
       branchName: r.branch?.name,
+      branchSlug: r.branch?.slug,
     }));
 }
