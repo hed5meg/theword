@@ -99,8 +99,9 @@ export async function createRendering(formData: FormData) {
 
   await linkTenets(sb, rendering!.id, tenetSlugs);
 
+  // Land on the branch just offered, not the gathered seed.
   revalidatePath(backTo);
-  redirect(backTo);
+  redirect(`${backTo}?rendering=${rendering!.id}`);
 }
 
 /** Replace a rendering's principle links with the given set. */
@@ -182,6 +183,7 @@ export async function updateRendering(formData: FormData) {
   await sb.from("rendering_tenets").delete().eq("rendering_id", id);
   await linkTenets(sb, id, tenetSlugs);
 
+  // Return to the edited branch, not the gathered seed.
   revalidatePath(backTo);
-  redirect(backTo);
+  redirect(`${backTo}?rendering=${id}`);
 }
