@@ -139,6 +139,20 @@ body {
   color: var(--color-gold);
   text-underline-offset: 3px;
 }
+/* Scripture references (auto-linked to Gospel Library) — a dotted gold underline
+   sets them apart from ordinary links; hover firms it up. */
+.scripture-ref {
+  color: var(--color-gold);
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-decoration-color: var(--color-gold-soft);
+  text-underline-offset: 3px;
+  cursor: help;
+}
+.scripture-ref:hover,
+.scripture-ref:focus-visible {
+  text-decoration-style: solid;
+}
 /* Headings — Tailwind's preflight flattens these, so restore a reverent scale. */
 .prose-reverent h1,
 .prose-reverent h2,

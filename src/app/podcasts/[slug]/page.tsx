@@ -106,7 +106,7 @@ export default async function EpisodePage({
 
       {ep.notes && (
         <div className="mt-8">
-          <Prose>{ep.notes}</Prose>
+          <Prose scripture>{ep.notes}</Prose>
         </div>
       )}
 

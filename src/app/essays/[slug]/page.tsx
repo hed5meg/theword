@@ -104,7 +104,7 @@ export default async function EssayPage({
       </header>
 
       <div className="mt-8">
-        <Prose>{essay.body}</Prose>
+        <Prose scripture>{essay.body}</Prose>
       </div>
 
       <footer className="mt-10 flex flex-wrap items-center justify-between gap-3 border-t border-line/70 pt-5">
