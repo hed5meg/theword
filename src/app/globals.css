@@ -139,6 +139,79 @@ body {
   color: var(--color-gold);
   text-underline-offset: 3px;
 }
+/* Headings — Tailwind's preflight flattens these, so restore a reverent scale. */
+.prose-reverent h1,
+.prose-reverent h2,
+.prose-reverent h3,
+.prose-reverent h4 {
+  font-family: var(--font-serif);
+  color: var(--color-ink);
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  margin-block: 1.5em 0.5em;
+}
+.prose-reverent h1:first-child,
+.prose-reverent h2:first-child,
+.prose-reverent h3:first-child,
+.prose-reverent h4:first-child {
+  margin-top: 0;
+}
+.prose-reverent h1 {
+  font-size: 1.9em;
+}
+.prose-reverent h2 {
+  font-size: 1.45em;
+}
+.prose-reverent h3 {
+  font-size: 1.2em;
+}
+.prose-reverent h4 {
+  font-size: 1.05em;
+  color: var(--color-ink-soft);
+}
+.prose-reverent ul,
+.prose-reverent ol {
+  margin-block: 1.15em;
+  padding-left: 1.4em;
+}
+.prose-reverent ul {
+  list-style: disc;
+}
+.prose-reverent ol {
+  list-style: decimal;
+}
+.prose-reverent li {
+  margin-block: 0.35em;
+}
+.prose-reverent li::marker {
+  color: var(--color-gold-soft);
+}
+.prose-reverent blockquote {
+  margin-block: 1.15em;
+  padding-left: 1.1em;
+  border-left: 2px solid var(--color-gold-soft);
+  font-style: italic;
+  color: var(--color-ink-soft);
+}
+.prose-reverent hr {
+  margin-block: 2em;
+  border: none;
+  border-top: 1px solid var(--color-line);
+}
+.prose-reverent h1 + p,
+.prose-reverent h2 + p,
+.prose-reverent h3 + p,
+.prose-reverent h4 + p {
+  margin-top: 0;
+}
+.prose-reverent code {
+  font-family: var(--font-sans);
+  font-size: 0.9em;
+  background: var(--color-glow);
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+}
 
 /* Author annotation (gloss): a word/phrase the author explains. Gently tinted
    with a solid gold underline (the translator's own hand), distinct from the
