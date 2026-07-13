@@ -64,13 +64,23 @@ function asArray<T>(v: T | T[] | undefined): T[] {
 /** Normalize an itunes:duration ("3672" or "1:02:03") to "1:02:03". */
 export function formatDuration(raw?: string): string {
   if (!raw) return "";
-  if (raw.includes(":")) return raw;
-  const total = Number(raw);
-  if (!Number.isFinite(total) || total <= 0) return "";
-  const h = Math.floor(total / 3600);
-  const m = Math.floor((total % 3600) / 60);
-  const s = Math.floor(total % 60);
   const pad = (n: number) => String(n).padStart(2, "0");
+  let h = 0;
+  let m = 0;
+  let s = 0;
+  if (raw.includes(":")) {
+    const parts = raw.split(":").map((n) => parseInt(n, 10));
+    if (parts.some((n) => Number.isNaN(n))) return raw;
+    if (parts.length === 3) [h, m, s] = parts;
+    else if (parts.length === 2) [m, s] = parts;
+    else [s] = parts;
+  } else {
+    const total = Number(raw);
+    if (!Number.isFinite(total) || total <= 0) return "";
+    h = Math.floor(total / 3600);
+    m = Math.floor((total % 3600) / 60);
+    s = Math.floor(total % 60);
+  }
   return h > 0 ? `${h}:${pad(m)}:${pad(s)}` : `${m}:${pad(s)}`;
 }
 
