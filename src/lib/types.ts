@@ -16,11 +16,29 @@ export interface Profile {
 
 export type RenderingStatus = "draft" | "submitted" | "gathered" | "archived";
 
-export type ResonanceTarget = "rendering" | "tenet" | "reflection" | "arrangement";
+export type ResonanceTarget =
+  | "rendering"
+  | "tenet"
+  | "reflection"
+  | "arrangement"
+  | "essay"
+  | "episode";
 
-export type ReflectionTarget = "passage" | "rendering" | "tenet" | "arrangement";
+export type ReflectionTarget =
+  | "passage"
+  | "rendering"
+  | "tenet"
+  | "arrangement"
+  | "essay"
+  | "episode";
 
-export type FlagTarget = "passage" | "rendering" | "tenet" | "reflection";
+export type FlagTarget =
+  | "passage"
+  | "rendering"
+  | "tenet"
+  | "reflection"
+  | "essay"
+  | "episode";
 
 export interface Tenet {
   id?: string;
@@ -257,6 +275,79 @@ export interface RefinementView {
   replies: { id: string; authorName: string; body: string }[];
   canManage: boolean;
   isProposer: boolean;
+}
+
+// ---- Essays & Podcasts (curated) -------------------------------------------
+/** Where an essay or episode is anchored in the reader (any may be absent). */
+export interface PieceAnchor {
+  passageSlug?: string;
+  passageTitle?: string;
+  arrangementSlug?: string;
+  arrangementTitle?: string;
+  tenetSlug?: string;
+  tenetTitle?: string;
+}
+
+export interface Essay {
+  id: string;
+  title: string;
+  slug: string;
+  dek?: string;
+  body: string;
+  byline?: string;
+  authorName?: string;
+  authorHandle?: string;
+  status: "draft" | "published";
+  publishedAt?: string;
+  resonanceCount: number;
+  anchor: PieceAnchor;
+}
+
+export interface EssayCard {
+  title: string;
+  slug: string;
+  dek?: string;
+  byline?: string;
+  authorName?: string;
+  status: "draft" | "published";
+  publishedAt?: string;
+  anchor: PieceAnchor;
+}
+
+export interface PodcastEpisode {
+  id: string;
+  title: string;
+  slug: string;
+  series?: string;
+  notes?: string;
+  audioUrl: string;
+  byline?: string;
+  authorName?: string;
+  authorHandle?: string;
+  status: "draft" | "published";
+  publishedAt?: string;
+  resonanceCount: number;
+  anchor: PieceAnchor;
+}
+
+export interface EpisodeCard {
+  title: string;
+  slug: string;
+  series?: string;
+  byline?: string;
+  authorName?: string;
+  status: "draft" | "published";
+  publishedAt?: string;
+  anchor: PieceAnchor;
+}
+
+/** A compact reference to an anchored piece, for surfacing on reader pages. */
+export interface PieceRef {
+  kind: "essay" | "episode";
+  title: string;
+  slug: string;
+  byline?: string;
+  authorName?: string;
 }
 
 export interface ArrangementCard extends ArrangementMeta {

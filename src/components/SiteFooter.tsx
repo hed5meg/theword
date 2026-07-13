@@ -17,6 +17,14 @@ export function SiteFooter() {
           <Link href="/guidelines" className="transition-colors hover:text-ink-soft">
             Guidelines
           </Link>
+          <span aria-hidden className="hidden sm:inline">·</span>
+          <Link href="/essays" className="transition-colors hover:text-ink-soft">
+            Essays
+          </Link>
+          <span aria-hidden className="hidden sm:inline">·</span>
+          <Link href="/podcasts" className="transition-colors hover:text-ink-soft">
+            Podcasts
+          </Link>
           <span aria-hidden className="hidden sm:inline">
             ·
           </span>

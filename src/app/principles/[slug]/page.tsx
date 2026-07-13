@@ -5,6 +5,8 @@ import { getTenet } from "@/lib/data";
 import { getUser } from "@/lib/auth";
 import { getMyResonatedIds } from "@/lib/resonance";
 import { getReflections } from "@/lib/data/reflections";
+import { getPiecesForTenet } from "@/lib/data/pieces";
+import { AnchoredPieces } from "@/components/AnchoredPieces";
 import { ResonanceControl } from "@/components/ResonanceControl";
 import { Reflections } from "@/components/Reflections";
 import { FlagControl } from "@/components/FlagControl";
@@ -35,10 +37,11 @@ export default async function TenetPage({
   if (!detail) notFound();
   const { tenet, usages } = detail;
 
-  const [user, resonated, reflections] = await Promise.all([
+  const [user, resonated, reflections, anchoredPieces] = await Promise.all([
     getUser(),
     tenet.id ? getMyResonatedIds("tenet", [tenet.id]) : Promise.resolve(new Set<string>()),
     tenet.id ? getReflections("tenet", tenet.id) : Promise.resolve([]),
+    getPiecesForTenet(tenet.id),
   ]);
 
   return (
@@ -122,6 +125,8 @@ export default async function TenetPage({
           </p>
         )}
       </section>
+
+      <AnchoredPieces pieces={anchoredPieces} className="mt-10" />
 
       {tenet.id && (
         <Reflections

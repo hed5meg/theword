@@ -10,6 +10,8 @@ import { getProfile } from "@/lib/auth";
 import { getMyResonatedIds } from "@/lib/resonance";
 import { getReflections } from "@/lib/data/reflections";
 import { getGatheredHistory } from "@/lib/data/gathering";
+import { getPiecesForPassage } from "@/lib/data/pieces";
+import { AnchoredPieces } from "@/components/AnchoredPieces";
 import { getNotesByRendering } from "@/lib/data/notes";
 import { getAnnotationsByRendering } from "@/lib/data/annotations";
 import { RenderingArticle } from "@/components/RenderingArticle";
@@ -93,6 +95,7 @@ export default async function PassagePage({
     outline,
     notesByRendering,
     annotationsByRendering,
+    anchoredPieces,
   ] = await Promise.all([
     getProfile(),
     getMyResonatedIds("rendering", renderingIds),
@@ -101,6 +104,7 @@ export default async function PassagePage({
     getArrangementOutline(arrangement),
     getNotesByRendering(renderingIds),
     getAnnotationsByRendering(renderingIds),
+    getPiecesForPassage(p.id),
   ]);
   const allTenets = (await getTenets()).map((t) => ({ slug: t.slug, title: t.title }));
   const signedIn = Boolean(profile);
@@ -332,6 +336,8 @@ export default async function PassagePage({
       </div>
         </>
       )}
+
+      <AnchoredPieces pieces={anchoredPieces} className="mt-10" />
 
       {/* Steward tools */}
       {isSteward && p.id && (

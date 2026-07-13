@@ -81,7 +81,13 @@ export function mapRendering(
 /** Count additive resonances for a set of targets, tallied by target id. */
 export async function resonanceCounts(
   sb: SupabaseClient,
-  targetType: "rendering" | "tenet" | "reflection" | "arrangement",
+  targetType:
+    | "rendering"
+    | "tenet"
+    | "reflection"
+    | "arrangement"
+    | "essay"
+    | "episode",
   ids: string[],
 ): Promise<Map<string, number>> {
   const counts = new Map<string, number>();
