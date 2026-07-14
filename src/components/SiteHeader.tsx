@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { NavLink } from "@/components/NavLink";
 import { getProfile } from "@/lib/auth";
 import { getNoteCount } from "@/lib/data/notes";
 import { getRefinementCount } from "@/lib/data/refinements";
@@ -29,24 +30,13 @@ export async function SiteHeader() {
           </span>
         </Link>
         <nav className="ui flex flex-1 flex-wrap items-center justify-end gap-x-4 gap-y-2 text-sm sm:gap-5">
-          <Link href="/read" className="text-ink-soft transition-colors hover:text-ink">
-            Unseal
-          </Link>
-          <Link
-            href="/arrangements"
-            className="hidden text-ink-soft transition-colors hover:text-ink sm:inline"
-          >
+          <NavLink href="/read">Unseal</NavLink>
+          <NavLink href="/arrangements" className="hidden sm:inline">
             Arrangements
-          </Link>
-          <Link href="/principles" className="text-ink-soft transition-colors hover:text-ink">
-            Principles
-          </Link>
-          <Link href="/essays" className="text-ink-soft transition-colors hover:text-ink">
-            Essays
-          </Link>
-          <Link href="/podcasts" className="text-ink-soft transition-colors hover:text-ink">
-            Podcasts
-          </Link>
+          </NavLink>
+          <NavLink href="/principles">Principles</NavLink>
+          <NavLink href="/essays">Essays</NavLink>
+          <NavLink href="/podcasts">Podcasts</NavLink>
           {profile ? (
             <>
               {(profile.role === "steward" || profile.role === "admin") && (
@@ -57,24 +47,13 @@ export async function SiteHeader() {
                   Steward
                 </Link>
               )}
-              <Link
-                href="/notes"
-                className="hidden text-ink-soft transition-colors hover:text-ink sm:inline"
-              >
+              <NavLink href="/notes" className="hidden sm:inline">
                 Notes{noteCount > 0 ? ` (${noteCount})` : ""}
-              </Link>
-              <Link
-                href="/refinements"
-                className="hidden text-ink-soft transition-colors hover:text-ink sm:inline"
-              >
+              </NavLink>
+              <NavLink href="/refinements" className="hidden sm:inline">
                 Refinements{refinementCount > 0 ? ` (${refinementCount})` : ""}
-              </Link>
-              <Link
-                href="/account"
-                className="text-ink-soft transition-colors hover:text-ink"
-              >
-                {profile.displayName}
-              </Link>
+              </NavLink>
+              <NavLink href="/account">{profile.displayName}</NavLink>
             </>
           ) : (
             <Link
