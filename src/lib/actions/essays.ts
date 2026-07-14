@@ -34,6 +34,33 @@ async function uniqueSlug(sb: SB, table: string, base: string): Promise<string> 
   return slug;
 }
 
+/** Resolve a theme by title (case-insensitive), creating it if new. */
+async function resolveThemeId(sb: SB, rawTitle: string): Promise<string | null> {
+  const title = rawTitle.trim();
+  if (!title) return null;
+  const { data: all } = await sb.from("essay_themes").select("id,title,slug");
+  const existing = (all ?? []).find(
+    (t: { title: string }) => t.title.toLowerCase() === title.toLowerCase(),
+  );
+  if (existing) return (existing as { id: string }).id;
+  const base = slugify(title) || "theme";
+  const used = new Set((all ?? []).map((t: { slug: string }) => t.slug));
+  let slug = base;
+  let n = 2;
+  while (used.has(slug)) slug = `${base}-${n++}`;
+  const { data: created } = await sb
+    .from("essay_themes")
+    .insert({ title, slug })
+    .select("id")
+    .maybeSingle();
+  return (created as { id: string } | null)?.id ?? null;
+}
+
+function themeOrderOf(formData: FormData): number {
+  const n = Number(formData.get("theme_order") ?? 0);
+  return Number.isFinite(n) ? Math.trunc(n) : 0;
+}
+
 function anchorFields(formData: FormData) {
   const one = (k: string) => {
     const v = String(formData.get(k) ?? "").trim();
@@ -60,6 +87,7 @@ export async function createEssay(formData: FormData) {
 
   if (!title || !body) redirect("/essays/new?error=required");
 
+  const themeId = await resolveThemeId(sb, String(formData.get("theme_name") ?? ""));
   const slug = await uniqueSlug(sb, "essays", slugify(title));
   const { error } = await sb.from("essays").insert({
     author_id: authorId,
@@ -70,6 +98,8 @@ export async function createEssay(formData: FormData) {
     byline: byline || null,
     status,
     published_at: status === "published" ? new Date().toISOString() : null,
+    theme_id: themeId,
+    theme_order: themeOrderOf(formData),
     idempotency_key: idemKey(formData),
     ...anchorFields(formData),
   });
@@ -106,6 +136,7 @@ export async function updateEssay(formData: FormData) {
       ? (cur?.published_at as string | null) ?? new Date().toISOString()
       : (cur?.published_at as string | null) ?? null;
 
+  const themeId = await resolveThemeId(sb, String(formData.get("theme_name") ?? ""));
   const { error } = await sb
     .from("essays")
     .update({
@@ -115,6 +146,8 @@ export async function updateEssay(formData: FormData) {
       byline: byline || null,
       status,
       published_at: publishedAt,
+      theme_id: themeId,
+      theme_order: themeOrderOf(formData),
       updated_at: new Date().toISOString(),
       ...anchorFields(formData),
     })

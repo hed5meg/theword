@@ -301,6 +301,8 @@ export interface Essay {
   publishedAt?: string;
   resonanceCount: number;
   anchor: PieceAnchor;
+  themeTitle?: string;
+  themeSlug?: string;
 }
 
 export interface EssayCard {
@@ -312,6 +314,16 @@ export interface EssayCard {
   status: "draft" | "published";
   publishedAt?: string;
   anchor: PieceAnchor;
+  themeTitle?: string;
+  themeSlug?: string;
+  themeOrder?: number;
+}
+
+export interface EssayTheme {
+  title: string;
+  slug: string;
+  description?: string;
+  essayCount: number;
 }
 
 export interface PodcastEpisode {

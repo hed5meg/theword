@@ -10,6 +10,7 @@ export function EssayForm({
   action,
   editing,
   options,
+  themes = [],
   error,
   cancelHref,
 }: {
@@ -20,6 +21,7 @@ export function EssayForm({
     arrangements: AnchorOption[];
     tenets: AnchorOption[];
   };
+  themes?: string[];
   error?: string;
   cancelHref: string;
 }) {
@@ -76,6 +78,45 @@ export function EssayForm({
           placeholder="e.g. by a friend of the gathering"
           className={field}
         />
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-[1fr_auto]">
+        <div>
+          <label htmlFor="theme_name" className="block text-sm text-ink-soft">
+            Theme <span className="text-ink-faint">(optional)</span>
+          </label>
+          <input
+            id="theme_name"
+            name="theme_name"
+            list="essay-themes"
+            defaultValue={editing?.themeTitle}
+            placeholder="e.g. Wheat and Tares"
+            autoComplete="off"
+            className={field}
+          />
+          {themes.length > 0 && (
+            <datalist id="essay-themes">
+              {themes.map((t) => (
+                <option key={t} value={t} />
+              ))}
+            </datalist>
+          )}
+          <p className="mt-1 text-xs text-ink-faint">
+            Gather essays under a theme; reuse the same name to add more.
+          </p>
+        </div>
+        <div>
+          <label htmlFor="theme_order" className="block text-sm text-ink-soft">
+            Order
+          </label>
+          <input
+            id="theme_order"
+            name="theme_order"
+            type="number"
+            defaultValue={editing?.themeOrder ?? 0}
+            className={`${field} sm:w-24`}
+          />
+        </div>
       </div>
 
       <AnchorFields

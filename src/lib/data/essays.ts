@@ -13,7 +13,7 @@ type AnchorRefs = {
 };
 
 const SELECT =
-  "id,title,slug,dek,body,byline,status,published_at,author:profiles(handle,display_name),passages(slug,title),arrangements(slug,title),tenets(slug,title)";
+  "id,title,slug,dek,body,byline,status,published_at,theme_order,author:profiles(handle,display_name),theme:essay_themes(title,slug),passages(slug,title),arrangements(slug,title),tenets(slug,title)";
 
 function anchorOf(r: AnchorRefs): PieceAnchor {
   return {
@@ -35,7 +35,9 @@ type Row = AnchorRefs & {
   byline: string | null;
   status: Essay["status"];
   published_at: string | null;
+  theme_order: number | null;
   author: { handle: string; display_name: string } | null;
+  theme: { title: string; slug: string } | null;
 };
 
 /** Published essays (plus the viewing steward's drafts), newest first. */
@@ -57,6 +59,9 @@ export async function listEssays(): Promise<EssayCard[]> {
       status: r.status,
       publishedAt: r.published_at ?? undefined,
       anchor: anchorOf(r),
+      themeTitle: r.theme?.title,
+      themeSlug: r.theme?.slug,
+      themeOrder: r.theme_order ?? 0,
     }));
   } catch {
     return [];
@@ -88,6 +93,8 @@ export async function getEssay(slug: string): Promise<Essay | null> {
       publishedAt: r.published_at ?? undefined,
       resonanceCount: counts.get(r.id) ?? 0,
       anchor: anchorOf(r),
+      themeTitle: r.theme?.title,
+      themeSlug: r.theme?.slug,
     };
   } catch {
     return null;
@@ -105,6 +112,8 @@ export interface EssayEdit {
   passageId: string;
   arrangementId: string;
   tenetId: string;
+  themeTitle: string;
+  themeOrder: number;
 }
 
 /** Raw essay row for editing (stewards only, via RLS). */
@@ -114,7 +123,7 @@ export async function getEssayForEdit(slug: string): Promise<EssayEdit | null> {
     const { data } = await sb
       .from("essays")
       .select(
-        "id,title,slug,dek,body,byline,status,passage_id,arrangement_id,tenet_id",
+        "id,title,slug,dek,body,byline,status,theme_order,passage_id,arrangement_id,tenet_id,theme:essay_themes(title)",
       )
       .eq("slug", slug)
       .maybeSingle();
@@ -127,9 +136,11 @@ export async function getEssayForEdit(slug: string): Promise<EssayEdit | null> {
       body: string;
       byline: string | null;
       status: Essay["status"];
+      theme_order: number | null;
       passage_id: string | null;
       arrangement_id: string | null;
       tenet_id: string | null;
+      theme: { title: string } | null;
     };
     return {
       id: r.id,
@@ -142,6 +153,8 @@ export async function getEssayForEdit(slug: string): Promise<EssayEdit | null> {
       passageId: r.passage_id ?? "",
       arrangementId: r.arrangement_id ?? "",
       tenetId: r.tenet_id ?? "",
+      themeTitle: r.theme?.title ?? "",
+      themeOrder: r.theme_order ?? 0,
     };
   } catch {
     return null;

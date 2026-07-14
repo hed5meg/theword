@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getEssay } from "@/lib/data/essays";
+import { getEssay, listEssays } from "@/lib/data/essays";
 import { getProfile } from "@/lib/auth";
 import { getMyResonatedIds } from "@/lib/resonance";
 import { getReflections } from "@/lib/data/reflections";
@@ -52,10 +52,25 @@ export default async function EssayPage({
   const isSteward = profile?.role === "steward" || profile?.role === "admin";
   const path = `/essays/${slug}`;
 
-  const [resonated, reflections] = await Promise.all([
+  const [resonated, reflections, siblings] = await Promise.all([
     getMyResonatedIds("essay", [essay.id]),
     getReflections("essay", essay.id),
+    essay.themeSlug ? listEssays() : Promise.resolve([]),
   ]);
+
+  // Previous / next essay within the theme (in order).
+  const inTheme = essay.themeSlug
+    ? siblings
+        .filter((e) => e.themeSlug === essay.themeSlug)
+        .sort(
+          (a, b) =>
+            (a.themeOrder ?? 0) - (b.themeOrder ?? 0) ||
+            (b.publishedAt ?? "").localeCompare(a.publishedAt ?? ""),
+        )
+    : [];
+  const idx = inTheme.findIndex((e) => e.slug === essay.slug);
+  const prev = idx > 0 ? inTheme[idx - 1] : null;
+  const next = idx >= 0 && idx < inTheme.length - 1 ? inTheme[idx + 1] : null;
 
   return (
     <div className="mx-auto max-w-2xl px-5 py-14 sm:px-8">
@@ -97,6 +112,17 @@ export default async function EssayPage({
           </p>
         )}
         <p className="ui mt-4 text-sm text-ink-faint">
+          {essay.themeSlug && essay.themeTitle && (
+            <>
+              <Link
+                href={`/essays/theme/${essay.themeSlug}`}
+                className="text-gold transition-colors hover:text-ink"
+              >
+                {essay.themeTitle}
+              </Link>
+              <span aria-hidden> · </span>
+            </>
+          )}
           {essay.byline ?? essay.authorName}
           {essay.publishedAt ? ` · ${fmt(essay.publishedAt)}` : ""}
         </p>
@@ -119,6 +145,45 @@ export default async function EssayPage({
         />
         <FlagControl targetType="essay" targetId={essay.id} path={path} signedIn={signedIn} />
       </footer>
+
+      {(prev || next) && (
+        <nav className="ui mt-8 flex items-stretch justify-between gap-4 border-t border-line/70 pt-6 text-sm">
+          {prev ? (
+            <Link
+              href={`/essays/${prev.slug}`}
+              className="group flex max-w-[45%] flex-col text-left transition-colors hover:text-ink"
+            >
+              <span className="text-xs uppercase tracking-wider text-ink-faint">← Previous</span>
+              <span className="mt-1 font-serif text-base text-ink-soft group-hover:text-ink">
+                {prev.title}
+              </span>
+            </Link>
+          ) : (
+            <span />
+          )}
+          {essay.themeSlug && (
+            <Link
+              href={`/essays/theme/${essay.themeSlug}`}
+              className="self-center whitespace-nowrap text-xs text-ink-faint transition-colors hover:text-gold"
+            >
+              {essay.themeTitle}
+            </Link>
+          )}
+          {next ? (
+            <Link
+              href={`/essays/${next.slug}`}
+              className="group flex max-w-[45%] flex-col text-right transition-colors hover:text-ink"
+            >
+              <span className="text-xs uppercase tracking-wider text-ink-faint">Next →</span>
+              <span className="mt-1 font-serif text-base text-ink-soft group-hover:text-ink">
+                {next.title}
+              </span>
+            </Link>
+          ) : (
+            <span />
+          )}
+        </nav>
+      )}
 
       <Reflections
         targetType="essay"
