@@ -106,6 +106,12 @@ export function ogCard({
         </div>
       </div>
     ),
-    OG_SIZE,
+    {
+      ...OG_SIZE,
+      headers: {
+        // Edge-cache the generated card so scrapers get it instantly.
+        "cache-control": "public, immutable, no-transform, max-age=86400, s-maxage=604800",
+      },
+    },
   );
 }
