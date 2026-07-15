@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getEssay, listEssays } from "@/lib/data/essays";
+import { pageMeta, summarize } from "@/lib/metadata";
 import { getProfile } from "@/lib/auth";
 import { getMyResonatedIds } from "@/lib/resonance";
 import { getReflections } from "@/lib/data/reflections";
@@ -23,7 +24,12 @@ export async function generateMetadata({
   const { slug } = await params;
   const essay = await getEssay(slug);
   if (!essay) return {};
-  return { title: essay.title, description: essay.dek };
+  return pageMeta({
+    title: essay.title,
+    description: essay.dek || summarize(essay.body),
+    pathname: `/essays/${slug}`,
+    type: "article",
+  });
 }
 
 function fmt(iso?: string): string {

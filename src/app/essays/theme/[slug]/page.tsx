@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getThemeMeta } from "@/lib/data/essay-themes";
+import { pageMeta } from "@/lib/metadata";
 import { listEssays } from "@/lib/data/essays";
 import { getProfile } from "@/lib/auth";
 import { updateTheme } from "@/lib/actions/essay-themes";
@@ -18,7 +19,13 @@ export async function generateMetadata({
   const { slug } = await params;
   const theme = await getThemeMeta(slug);
   if (!theme) return {};
-  return { title: theme.title, description: theme.description };
+  return pageMeta({
+    title: theme.title,
+    description:
+      theme.description ||
+      `A collection of essays gathered under “${theme.title}.”`,
+    pathname: `/essays/theme/${slug}`,
+  });
 }
 
 export default async function ThemePage({

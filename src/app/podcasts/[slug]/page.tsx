@@ -13,6 +13,7 @@ import { AudioEmbed } from "@/components/AudioEmbed";
 import { AnchorTags } from "@/components/AnchorTags";
 import { deleteEpisode } from "@/lib/actions/podcasts";
 import { ConfirmButton } from "@/components/ConfirmButton";
+import { pageMeta, summarize } from "@/lib/metadata";
 
 export const dynamic = "force-dynamic";
 
@@ -24,7 +25,15 @@ export async function generateMetadata({
   const { slug } = await params;
   const ep = await getEpisode(slug);
   if (!ep) return {};
-  return { title: ep.title, description: ep.series };
+  return pageMeta({
+    title: ep.title,
+    description:
+      (ep.notes && summarize(ep.notes)) ||
+      ep.series ||
+      "An episode on theword.love.",
+    pathname: `/podcasts/${slug}`,
+    type: "article",
+  });
 }
 
 function fmt(iso?: string): string {

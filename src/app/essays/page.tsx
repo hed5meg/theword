@@ -4,13 +4,15 @@ import type { EssayCard } from "@/lib/types";
 import { listEssays } from "@/lib/data/essays";
 import { listThemes } from "@/lib/data/essay-themes";
 import { getProfile } from "@/lib/auth";
+import { pageMeta } from "@/lib/metadata";
 
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMeta({
   title: "Essays",
   description: "Reflections on Revelation, love, and the work of gathering.",
-};
+  pathname: "/essays",
+});
 
 function fmt(iso?: string): string {
   if (!iso) return "";

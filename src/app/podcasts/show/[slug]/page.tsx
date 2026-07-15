@@ -7,6 +7,7 @@ import { getProfile } from "@/lib/auth";
 import { EpisodePlayer } from "@/components/EpisodePlayer";
 import { unsubscribeFeed } from "@/lib/actions/podcast-feeds";
 import { ConfirmButton } from "@/components/ConfirmButton";
+import { pageMeta } from "@/lib/metadata";
 
 export const dynamic = "force-dynamic";
 
@@ -18,7 +19,12 @@ export async function generateMetadata({
   const { slug } = await params;
   const show = await getShow(slug);
   if (!show) return {};
-  return { title: show.title, description: show.feed.description };
+  return pageMeta({
+    title: show.title,
+    description:
+      show.feed.description || `${show.title} — a podcast on theword.love.`,
+    pathname: `/podcasts/show/${slug}`,
+  });
 }
 
 export default async function ShowPage({

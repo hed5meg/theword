@@ -4,13 +4,15 @@ import type { Metadata } from "next";
 import { listEpisodes } from "@/lib/data/podcasts";
 import { getShowSummaries } from "@/lib/data/podcast-feeds";
 import { getProfile } from "@/lib/auth";
+import { pageMeta } from "@/lib/metadata";
 
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMeta({
   title: "Podcasts",
   description: "Conversations and readings on Revelation and love.",
-};
+  pathname: "/podcasts",
+});
 
 function fmt(iso?: string): string {
   if (!iso) return "";
