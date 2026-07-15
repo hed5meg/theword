@@ -10,6 +10,7 @@ import { ResonanceControl } from "@/components/ResonanceControl";
 import { FlagControl } from "@/components/FlagControl";
 import { Reflections } from "@/components/Reflections";
 import { deleteEssay } from "@/lib/actions/essays";
+import { ConfirmButton } from "@/components/ConfirmButton";
 import { AnchorTags } from "@/components/AnchorTags";
 
 export const dynamic = "force-dynamic";
@@ -86,12 +87,12 @@ export default async function EssayPage({
             <form action={deleteEssay}>
               <input type="hidden" name="id" value={essay.id} />
               <input type="hidden" name="slug" value={slug} />
-              <button
-                type="submit"
+              <ConfirmButton
+                confirm="Confirm delete"
                 className="text-ink-faint transition-colors hover:text-red-700"
               >
                 Delete
-              </button>
+              </ConfirmButton>
             </form>
           </span>
         )}

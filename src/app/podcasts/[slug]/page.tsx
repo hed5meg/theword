@@ -12,6 +12,7 @@ import { Reflections } from "@/components/Reflections";
 import { AudioEmbed } from "@/components/AudioEmbed";
 import { AnchorTags } from "@/components/AnchorTags";
 import { deleteEpisode } from "@/lib/actions/podcasts";
+import { ConfirmButton } from "@/components/ConfirmButton";
 
 export const dynamic = "force-dynamic";
 
@@ -72,12 +73,12 @@ export default async function EpisodePage({
             <form action={deleteEpisode}>
               <input type="hidden" name="id" value={ep.id} />
               <input type="hidden" name="slug" value={slug} />
-              <button
-                type="submit"
+              <ConfirmButton
+                confirm="Confirm delete"
                 className="text-ink-faint transition-colors hover:text-red-700"
               >
                 Delete
-              </button>
+              </ConfirmButton>
             </form>
           </span>
         )}

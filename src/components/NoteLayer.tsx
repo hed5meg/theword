@@ -17,6 +17,7 @@ import {
   deleteAnnotation,
 } from "@/lib/actions/annotations";
 import { IdempotencyField } from "@/components/IdempotencyField";
+import { ConfirmButton } from "@/components/ConfirmButton";
 
 // CSS Custom Highlight API (progressive enhancement; typed loosely as it's new).
 type HighlightCtor = new (...ranges: Range[]) => unknown;
@@ -557,13 +558,13 @@ export function NoteLayer({
                 Save
               </button>
               <span className="text-ink-faint">·</span>
-              <button
-                type="submit"
+              <ConfirmButton
                 formAction={deleteAnnotation}
+                confirm="Confirm remove"
                 className="text-sm text-ink-faint transition-colors hover:text-red-700"
               >
                 Remove gloss
-              </button>
+              </ConfirmButton>
             </div>
           </form>
         </Sheet>

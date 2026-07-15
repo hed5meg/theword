@@ -6,6 +6,7 @@ import { getShow } from "@/lib/data/podcast-feeds";
 import { getProfile } from "@/lib/auth";
 import { EpisodePlayer } from "@/components/EpisodePlayer";
 import { unsubscribeFeed } from "@/lib/actions/podcast-feeds";
+import { ConfirmButton } from "@/components/ConfirmButton";
 
 export const dynamic = "force-dynamic";
 
@@ -40,12 +41,12 @@ export default async function ShowPage({
         {isSteward && (
           <form action={unsubscribeFeed}>
             <input type="hidden" name="id" value={show.id} />
-            <button
-              type="submit"
+            <ConfirmButton
+              confirm="Confirm unsubscribe"
               className="ui text-ink-faint transition-colors hover:text-red-700"
             >
               Unsubscribe
-            </button>
+            </ConfirmButton>
           </form>
         )}
       </nav>
