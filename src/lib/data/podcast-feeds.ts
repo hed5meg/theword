@@ -60,7 +60,7 @@ export async function getShowSummaries(): Promise<ShowSummary[]> {
           episodeCount: 0,
         } satisfies ShowSummary;
       }
-      const latest = feed.episodes[0];
+      const latest = feed.episodes[feed.episodes.length - 1];
       return {
         slug: r.slug,
         title: r.title || feed.title,

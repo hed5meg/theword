@@ -145,11 +145,11 @@ export async function fetchFeed(url: string): Promise<Feed | null> {
     };
   });
 
-  // Newest first (feeds are usually already ordered, but be sure).
+  // Chronological — oldest first, so a series reads from episode one.
   episodes.sort((a, b) => {
     const ta = a.pubDate ? Date.parse(a.pubDate) : 0;
     const tb = b.pubDate ? Date.parse(b.pubDate) : 0;
-    return tb - ta;
+    return ta - tb;
   });
 
   return {
