@@ -17,14 +17,20 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const theme = await getThemeMeta(slug);
+  const [theme, all] = await Promise.all([getThemeMeta(slug), listEssays()]);
   if (!theme) return {};
+  const inTheme = all
+    .filter((e) => e.themeSlug === slug)
+    .sort((a, b) => (a.themeOrder ?? 0) - (b.themeOrder ?? 0));
+  const firstDek = inTheme.find((e) => e.dek)?.dek;
   return pageMeta({
     title: theme.title,
     description:
       theme.description ||
+      firstDek ||
       `A collection of essays gathered under “${theme.title}.”`,
     pathname: `/essays/theme/${slug}`,
+    staticImage: false,
   });
 }
 

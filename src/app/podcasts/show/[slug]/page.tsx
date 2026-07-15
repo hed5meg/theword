@@ -24,6 +24,7 @@ export async function generateMetadata({
     description:
       show.feed.description || `${show.title} — a podcast on theword.love.`,
     pathname: `/podcasts/show/${slug}`,
+    staticImage: false,
   });
 }
 

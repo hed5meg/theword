@@ -29,6 +29,7 @@ export async function generateMetadata({
     description: essay.dek || summarize(essay.body),
     pathname: `/essays/${slug}`,
     type: "article",
+    staticImage: false,
   });
 }
 

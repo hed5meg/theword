@@ -10,11 +10,14 @@ export function pageMeta({
   description,
   pathname,
   type = "website",
+  staticImage = true,
 }: {
   title: string;
   description?: string;
   pathname: string;
   type?: "website" | "article";
+  /** Set false when the route has its own dynamic opengraph-image. */
+  staticImage?: boolean;
 }): Metadata {
   return {
     title,
@@ -26,13 +29,15 @@ export function pageMeta({
       url: pathname,
       type,
       siteName: "The Unsealed Revelation",
-      images: [{ url: "/opengraph-image.png", width: 1200, height: 630 }],
+      ...(staticImage
+        ? { images: [{ url: "/opengraph-image.png", width: 1200, height: 630 }] }
+        : {}),
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: ["/opengraph-image.png"],
+      ...(staticImage ? { images: ["/opengraph-image.png"] } : {}),
     },
   };
 }

@@ -33,6 +33,7 @@ export async function generateMetadata({
       "An episode on theword.love.",
     pathname: `/podcasts/${slug}`,
     type: "article",
+    staticImage: false,
   });
 }
 
