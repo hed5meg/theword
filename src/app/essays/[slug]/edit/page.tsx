@@ -4,7 +4,7 @@ import Link from "next/link";
 import { getProfile } from "@/lib/auth";
 import { getEssayForEdit } from "@/lib/data/essays";
 import { getAnchorOptions } from "@/lib/data/pieces";
-import { listThemes } from "@/lib/data/essay-themes";
+import { listThemes, getThemeNextOrders } from "@/lib/data/essay-themes";
 import { EssayForm } from "@/components/EssayForm";
 import { updateEssay } from "@/lib/actions/essays";
 
@@ -24,10 +24,11 @@ export default async function EditEssayPage({
   const isSteward = profile?.role === "steward" || profile?.role === "admin";
   if (!isSteward) redirect(`/essays/${slug}`);
 
-  const [editing, options, themes, { error }] = await Promise.all([
+  const [editing, options, themes, nextOrders, { error }] = await Promise.all([
     getEssayForEdit(slug),
     getAnchorOptions(),
     listThemes(),
+    getThemeNextOrders(),
     searchParams,
   ]);
   if (!editing) notFound();
@@ -48,6 +49,7 @@ export default async function EditEssayPage({
         editing={editing}
         options={options}
         themes={themes.map((t) => t.title)}
+        nextOrders={nextOrders}
         error={error}
         cancelHref={`/essays/${slug}`}
       />

@@ -1,6 +1,7 @@
 import { IdempotencyField } from "@/components/IdempotencyField";
 import { SubmitButton } from "@/components/SubmitButton";
 import { AnchorFields, type AnchorOption } from "@/components/AnchorFields";
+import { ThemeOrderFields } from "@/components/ThemeOrderFields";
 import type { EssayEdit } from "@/lib/data/essays";
 
 const field =
@@ -11,6 +12,7 @@ export function EssayForm({
   editing,
   options,
   themes = [],
+  nextOrders = {},
   error,
   cancelHref,
 }: {
@@ -22,6 +24,7 @@ export function EssayForm({
     tenets: AnchorOption[];
   };
   themes?: string[];
+  nextOrders?: Record<string, number>;
   error?: string;
   cancelHref: string;
 }) {
@@ -80,44 +83,13 @@ export function EssayForm({
         />
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-[1fr_auto]">
-        <div>
-          <label htmlFor="theme_name" className="block text-sm text-ink-soft">
-            Theme <span className="text-ink-faint">(optional)</span>
-          </label>
-          <input
-            id="theme_name"
-            name="theme_name"
-            list="essay-themes"
-            defaultValue={editing?.themeTitle}
-            placeholder="e.g. Wheat and Tares"
-            autoComplete="off"
-            className={field}
-          />
-          {themes.length > 0 && (
-            <datalist id="essay-themes">
-              {themes.map((t) => (
-                <option key={t} value={t} />
-              ))}
-            </datalist>
-          )}
-          <p className="mt-1 text-xs text-ink-faint">
-            Gather essays under a theme; reuse the same name to add more.
-          </p>
-        </div>
-        <div>
-          <label htmlFor="theme_order" className="block text-sm text-ink-soft">
-            Order
-          </label>
-          <input
-            id="theme_order"
-            name="theme_order"
-            type="number"
-            defaultValue={editing?.themeOrder ?? 0}
-            className={`${field} sm:w-24`}
-          />
-        </div>
-      </div>
+      <ThemeOrderFields
+        themes={themes}
+        nextOrders={nextOrders}
+        initialTheme={editing?.themeTitle ?? ""}
+        initialOrder={editing?.themeOrder}
+        editing={Boolean(editing)}
+      />
 
       <AnchorFields
         passages={options.passages}

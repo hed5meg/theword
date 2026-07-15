@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getProfile } from "@/lib/auth";
 import { getAnchorOptions } from "@/lib/data/pieces";
-import { listThemes } from "@/lib/data/essay-themes";
+import { listThemes, getThemeNextOrders } from "@/lib/data/essay-themes";
 import { EssayForm } from "@/components/EssayForm";
 import { createEssay } from "@/lib/actions/essays";
 
@@ -20,9 +20,10 @@ export default async function NewEssayPage({
   const isSteward = profile?.role === "steward" || profile?.role === "admin";
   if (!isSteward) redirect("/essays");
 
-  const [options, themes, { error }] = await Promise.all([
+  const [options, themes, nextOrders, { error }] = await Promise.all([
     getAnchorOptions(),
     listThemes(),
+    getThemeNextOrders(),
     searchParams,
   ]);
 
@@ -41,6 +42,7 @@ export default async function NewEssayPage({
         action={createEssay}
         options={options}
         themes={themes.map((t) => t.title)}
+        nextOrders={nextOrders}
         error={error}
         cancelHref="/essays"
       />

@@ -1,4 +1,5 @@
 import { createAnonClient } from "@/lib/supabase/admin";
+import { createServerSupabase } from "@/lib/supabase/server";
 
 // Essay themes are public (RLS open read). Ordering: by the steward-set
 // position, then by creation. Graceful when the table is absent.
@@ -38,6 +39,37 @@ export async function listThemes(): Promise<ThemeMeta[]> {
     }));
   } catch {
     return [];
+  }
+}
+
+/**
+ * The next order number for each theme (max existing order + 1), keyed by the
+ * theme's lower-cased title. Used to auto-fill the essay form's Order field.
+ * Session client so a steward's drafts count toward the max.
+ */
+export async function getThemeNextOrders(): Promise<Record<string, number>> {
+  try {
+    const sb = await createServerSupabase();
+    const { data, error } = await sb
+      .from("essays")
+      .select("theme_order,theme:essay_themes(title)");
+    if (error || !data) return {};
+    const max: Record<string, number> = {};
+    for (const r of data as unknown as {
+      theme_order: number | null;
+      theme: { title: string } | null;
+    }[]) {
+      const title = r.theme?.title;
+      if (!title) continue;
+      const key = title.toLowerCase();
+      const o = r.theme_order ?? 0;
+      if (o > (max[key] ?? 0)) max[key] = o;
+    }
+    const next: Record<string, number> = {};
+    for (const k of Object.keys(max)) next[k] = max[k] + 1;
+    return next;
+  } catch {
+    return {};
   }
 }
 
