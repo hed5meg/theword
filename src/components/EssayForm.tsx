@@ -2,7 +2,8 @@ import { IdempotencyField } from "@/components/IdempotencyField";
 import { SubmitButton } from "@/components/SubmitButton";
 import { AnchorFields, type AnchorOption } from "@/components/AnchorFields";
 import { ThemeOrderFields } from "@/components/ThemeOrderFields";
-import type { EssayEdit } from "@/lib/data/essays";
+import { EssayBodyField } from "@/components/EssayBodyField";
+import type { EssayEdit, EssayLinkTarget } from "@/lib/data/essays";
 
 const field =
   "mt-1.5 w-full rounded-xl border border-line bg-card px-4 py-3 text-ink outline-none focus:border-gold-soft";
@@ -13,6 +14,7 @@ export function EssayForm({
   options,
   themes = [],
   nextOrders = {},
+  linkTargets = [],
   error,
   cancelHref,
 }: {
@@ -25,6 +27,7 @@ export function EssayForm({
   };
   themes?: string[];
   nextOrders?: Record<string, number>;
+  linkTargets?: EssayLinkTarget[];
   error?: string;
   cancelHref: string;
 }) {
@@ -57,18 +60,12 @@ export function EssayForm({
         <input id="dek" name="dek" defaultValue={editing?.dek} className={field} />
       </div>
 
-      <div>
-        <label htmlFor="body" className="block text-sm text-ink-soft">Essay</label>
-        <textarea
-          id="body"
-          name="body"
-          required
-          rows={16}
-          defaultValue={editing?.body}
-          placeholder="Write it plainly and lovingly. Markdown is welcome."
-          className={`${field} font-serif text-lg leading-relaxed`}
-        />
-      </div>
+      <EssayBodyField
+        defaultValue={editing?.body}
+        targets={linkTargets}
+        placeholder="Write it plainly and lovingly. Markdown is welcome."
+        className={`${field} font-serif text-lg leading-relaxed`}
+      />
 
       <div>
         <label htmlFor="byline" className="block text-sm text-ink-soft">

@@ -1,6 +1,32 @@
 import type { Essay, EssayCard, PieceAnchor } from "@/lib/types";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { resonanceCounts } from "@/lib/data/from-supabase";
+import { extractAnchors, type EssayAnchor } from "@/lib/rehype-essay";
+
+export interface EssayLinkTarget {
+  slug: string;
+  title: string;
+  anchors: EssayAnchor[];
+}
+
+/** Essays (with their linkable anchors) for the editor's cross-link picker. */
+export async function getEssayLinkTargets(): Promise<EssayLinkTarget[]> {
+  try {
+    const sb = await createServerSupabase();
+    const { data, error } = await sb
+      .from("essays")
+      .select("slug,title,body")
+      .order("title");
+    if (error || !data) return [];
+    return (data as { slug: string; title: string; body: string }[]).map((r) => ({
+      slug: r.slug,
+      title: r.title,
+      anchors: extractAnchors(r.body),
+    }));
+  } catch {
+    return [];
+  }
+}
 
 // Essays are curated: RLS returns published rows to everyone and drafts to
 // stewards. We use the session client so stewards see their drafts. Graceful:

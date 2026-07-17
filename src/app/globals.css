@@ -153,6 +153,42 @@ body {
 .scripture-ref:focus-visible {
   text-decoration-style: solid;
 }
+/* Cross-essay links — a solid gold underline, distinct from the dotted
+   scripture reference. */
+.essay-xref {
+  color: var(--color-gold);
+  text-decoration: underline;
+  text-decoration-color: var(--color-gold-soft);
+  text-underline-offset: 3px;
+}
+.essay-xref:hover {
+  text-decoration-thickness: 2px;
+}
+/* Anchored blocks get a little breathing room when scrolled to, and a gentle
+   gold pulse when you arrive via a cross-link. */
+.prose-reverent :where(h1, h2, h3, h4, p, li, blockquote)[id] {
+  scroll-margin-top: 5rem;
+}
+.xref-target {
+  animation: xref-pulse 2.4s ease;
+  border-radius: 6px;
+}
+@keyframes xref-pulse {
+  0%,
+  55% {
+    background-color: var(--color-glow);
+    box-shadow: 0 0 0 8px var(--color-glow);
+  }
+  100% {
+    background-color: transparent;
+    box-shadow: 0 0 0 8px transparent;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .xref-target {
+    animation-duration: 0.01ms;
+  }
+}
 /* Headings — Tailwind's preflight flattens these, so restore a reverent scale. */
 .prose-reverent h1,
 .prose-reverent h2,

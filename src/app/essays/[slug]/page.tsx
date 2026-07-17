@@ -12,6 +12,7 @@ import { FlagControl } from "@/components/FlagControl";
 import { Reflections } from "@/components/Reflections";
 import { deleteEssay } from "@/lib/actions/essays";
 import { ConfirmButton } from "@/components/ConfirmButton";
+import { AnchorArrival } from "@/components/AnchorArrival";
 import { AnchorTags } from "@/components/AnchorTags";
 
 export const dynamic = "force-dynamic";
@@ -63,8 +64,11 @@ export default async function EssayPage({
   const [resonated, reflections, siblings] = await Promise.all([
     getMyResonatedIds("essay", [essay.id]),
     getReflections("essay", essay.id),
-    essay.themeSlug ? listEssays() : Promise.resolve([]),
+    listEssays(),
   ]);
+
+  // Titles for resolving [[slug]] cross-links to the target essay's name.
+  const essayLinks = Object.fromEntries(siblings.map((e) => [e.slug, e.title]));
 
   // Previous / next essay within the theme (in order).
   const inTheme = essay.themeSlug
@@ -138,8 +142,11 @@ export default async function EssayPage({
       </header>
 
       <div className="mt-8">
-        <Prose scripture>{essay.body}</Prose>
+        <Prose scripture anchors essayLinks={essayLinks}>
+          {essay.body}
+        </Prose>
       </div>
+      <AnchorArrival />
 
       <footer className="mt-10 flex flex-wrap items-center justify-between gap-3 border-t border-line/70 pt-5">
         <ResonanceControl
