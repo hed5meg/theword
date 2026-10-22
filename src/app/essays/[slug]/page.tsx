@@ -14,6 +14,7 @@ import { deleteEssay } from "@/lib/actions/essays";
 import { ConfirmButton } from "@/components/ConfirmButton";
 import { AnchorArrival } from "@/components/AnchorArrival";
 import { AnchorTags } from "@/components/AnchorTags";
+import { PrintButton } from "@/components/PrintButton";
 
 export const dynamic = "force-dynamic";
 
@@ -86,27 +87,30 @@ export default async function EssayPage({
 
   return (
     <div className="mx-auto max-w-2xl px-5 py-14 sm:px-8">
-      <nav className="ui mb-8 flex items-center justify-between gap-4 text-sm text-ink-faint">
+      <nav className="ui mb-8 flex items-center justify-between gap-4 text-sm text-ink-faint print:hidden">
         <Link href="/essays" className="transition-colors hover:text-ink-soft">
           ← Essays
         </Link>
-        {isSteward && (
-          <span className="flex items-center gap-4">
-            <Link href={`/essays/${slug}/edit`} className="text-gold hover:text-ink">
-              Edit
-            </Link>
-            <form action={deleteEssay}>
-              <input type="hidden" name="id" value={essay.id} />
-              <input type="hidden" name="slug" value={slug} />
-              <ConfirmButton
-                confirm="Confirm delete"
-                className="text-ink-faint transition-colors hover:text-red-700"
-              >
-                Delete
-              </ConfirmButton>
-            </form>
-          </span>
-        )}
+        <span className="flex items-center gap-4">
+          <PrintButton />
+          {isSteward && (
+            <>
+              <Link href={`/essays/${slug}/edit`} className="text-gold hover:text-ink">
+                Edit
+              </Link>
+              <form action={deleteEssay}>
+                <input type="hidden" name="id" value={essay.id} />
+                <input type="hidden" name="slug" value={slug} />
+                <ConfirmButton
+                  confirm="Confirm delete"
+                  className="text-ink-faint transition-colors hover:text-red-700"
+                >
+                  Delete
+                </ConfirmButton>
+              </form>
+            </>
+          )}
+        </span>
       </nav>
 
       <header>
@@ -148,7 +152,11 @@ export default async function EssayPage({
       </div>
       <AnchorArrival />
 
-      <footer className="mt-10 flex flex-wrap items-center justify-between gap-3 border-t border-line/70 pt-5">
+      <p className="print-colophon hidden print:block">
+        theword.love/essays/{slug} · The Unsealed Revelation
+      </p>
+
+      <footer className="mt-10 flex flex-wrap items-center justify-between gap-3 border-t border-line/70 pt-5 print:hidden">
         <ResonanceControl
           targetType="essay"
           targetId={essay.id}
@@ -162,7 +170,7 @@ export default async function EssayPage({
       </footer>
 
       {(prev || next) && (
-        <nav className="ui mt-8 flex items-stretch justify-between gap-4 border-t border-line/70 pt-6 text-sm">
+        <nav className="ui mt-8 flex items-stretch justify-between gap-4 border-t border-line/70 pt-6 text-sm print:hidden">
           {prev ? (
             <Link
               href={`/essays/${prev.slug}`}
@@ -200,13 +208,15 @@ export default async function EssayPage({
         </nav>
       )}
 
-      <Reflections
-        targetType="essay"
-        targetId={essay.id}
-        path={path}
-        signedIn={signedIn}
-        reflections={reflections}
-      />
+      <div className="print:hidden">
+        <Reflections
+          targetType="essay"
+          targetId={essay.id}
+          path={path}
+          signedIn={signedIn}
+          reflections={reflections}
+        />
+      </div>
     </div>
   );
 }

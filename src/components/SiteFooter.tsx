@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export function SiteFooter() {
   return (
-    <footer className="mt-24 border-t border-line/70">
+    <footer className="mt-24 border-t border-line/70 print:hidden">
       <div className="mx-auto max-w-5xl px-5 py-10 sm:px-8">
         <p className="font-serif text-lg text-ink">
           Nothing is final. The gathering is the work.

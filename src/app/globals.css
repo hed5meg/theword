@@ -355,3 +355,84 @@ body {
     transition-duration: 0.001ms !important;
   }
 }
+
+/*
+  Print — set a piece like a printed page. Always the light palette (even when
+  reading in dark mode), app chrome hidden via print:hidden, a book-like measure,
+  and headings kept with the text that follows them.
+*/
+@media print {
+  @page {
+    size: auto;
+    margin: 2cm 2.2cm 2.2cm;
+  }
+  :root,
+  .dark {
+    --paper: #ffffff;
+    --paper-deep: #ffffff;
+    --card: #ffffff;
+    --ink: #1a1917;
+    --ink-soft: #3d3a35;
+    --ink-faint: #5c574e;
+    --line: #cfc8bb;
+    --gold: #6b5420;
+    --gold-soft: #8a6d2c;
+    --glow: transparent;
+    color-scheme: light;
+  }
+  html,
+  body {
+    background: #fff !important;
+  }
+  body {
+    font-size: 11.5pt;
+    line-height: 1.6;
+  }
+  /* Drop the on-screen container padding; @page margins frame the text. */
+  main > div {
+    max-width: none !important;
+    padding: 0 !important;
+  }
+  h1 {
+    font-size: 24pt !important;
+  }
+  .prose-reverent {
+    font-size: 12pt;
+    line-height: 1.65;
+    max-width: none;
+    orphans: 3;
+    widows: 3;
+  }
+  .prose-reverent :where(h1, h2, h3, h4) {
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+  .prose-reverent :where(blockquote, li, pre, figure, img) {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  /* Links read as text on paper — keep a quiet tint, lose the underlines. */
+  .prose-reverent a,
+  .scripture-ref,
+  .essay-xref {
+    color: inherit;
+    text-decoration: none;
+  }
+  .annotation {
+    background: none;
+    box-shadow: none;
+  }
+  .xref-target {
+    animation: none;
+    background: none;
+    box-shadow: none;
+  }
+  .print-colophon {
+    margin-top: 2.5em;
+    padding-top: 0.8em;
+    border-top: 1px solid var(--line);
+    font-family: var(--font-sans);
+    font-size: 8.5pt;
+    color: var(--ink-faint);
+  }
+}

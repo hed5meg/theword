@@ -11,7 +11,7 @@ export async function SiteHeader() {
     : [0, 0];
 
   return (
-    <header className="border-b border-line/70">
+    <header className="border-b border-line/70 print:hidden">
       <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-x-4 gap-y-2 px-5 py-4 sm:px-8">
         <Link href="/" className="group flex min-w-0 items-center gap-2.5">
           <svg
