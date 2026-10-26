@@ -427,6 +427,20 @@ body {
     background: none;
     box-shadow: none;
   }
+  /* Theme booklet: a title page, then each essay on a fresh page. */
+  .print-title-page {
+    padding-top: 6cm;
+  }
+  .print-title-page h1 {
+    font-size: 30pt !important;
+  }
+  .print-new-page {
+    break-before: page;
+    page-break-before: always;
+  }
+  .print-essay-title {
+    font-size: 24pt !important;
+  }
   .print-colophon {
     margin-top: 2.5em;
     padding-top: 0.8em;

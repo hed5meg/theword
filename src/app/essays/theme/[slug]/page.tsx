@@ -74,6 +74,17 @@ export default async function ThemePage({
         )}
         <p className="ui mt-3 text-xs text-ink-faint">
           {essays.length} {essays.length === 1 ? "essay" : "essays"}
+          {essays.length > 0 && (
+            <>
+              <span aria-hidden> · </span>
+              <Link
+                href={`/essays/theme/${slug}/print`}
+                className="transition-colors hover:text-ink-soft"
+              >
+                Print this theme
+              </Link>
+            </>
+          )}
         </p>
 
         {isSteward && (
